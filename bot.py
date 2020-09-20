@@ -248,7 +248,7 @@ async def user_info(ctx, target: Optional[Member]):
                 ("Bot?", target.bot, True),
                 ("Top role", target.top_role.mention, True),
                 ("Status", str(target.status).title(), True),
-                ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
+                ("Activity", f"{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}  **{target.activity.name if target.activity else ''}**", True),
                 ("Created at", target.created_at.strftime("%b %d, %Y "), True),
                 ("Joined at", target.joined_at.strftime("%b %d, %Y "), True)]
                 # ("Boosted", bool(target.premium_since), True)]
