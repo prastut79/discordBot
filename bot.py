@@ -210,7 +210,7 @@ async def clear_error(ctx, error):
 
 
 
-# bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
+
 bot.run(os.environ('DISCORD_TOKEN'))
 
 
