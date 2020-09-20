@@ -211,7 +211,7 @@ async def clear_error(ctx, error):
 
 
 
-bot.run(os.environ('DISCORD_TOKEN'))
+bot.run(os.environ.get('DISCORD_TOKEN'))
 
 
     
