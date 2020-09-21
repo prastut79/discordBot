@@ -1,12 +1,12 @@
 #https://discordpy.readthedocs.io/en/latest/logging.html
 #https://github.com/netsos798/pybot/blob/master/bot.py
 #https://dashboard.heroku.com/apps/py-bot-discord-798/logs
-
+#git add . , git commit -m "das", git push
 
 from os import environ
 from datetime import datetime 
 from typing import Optional
-import json
+import csv
 
 
 import discord
@@ -46,7 +46,7 @@ ANIME_GIRL_GIFS=[
 #'''---------------------------START-------------------------------'''
 
 bot = commands.Bot(command_prefix=environ.get('BOT_PREFIX'), case_insensitive=True)
-
+#
 #bot Start
 @bot.event
 async def on_ready():
@@ -97,7 +97,7 @@ async def on_member_join(member):
     role_dj = discord.utils.get(member.guild.roles, name='DJ')
     await member.add_roles(role_member, role_dj)
 
-
+'''
      #OPENING JSON FILE
     with open('discord_member_info.json','r') as f:
         data=json.load(f)
@@ -138,7 +138,7 @@ async def on_member_join(member):
         
         #WRITING TO JSON FILE
         with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)
+            json.dump(data,g, indent=4)'''
 #========================================================
 
 
@@ -164,7 +164,7 @@ async def on_member_remove(member):
         await channel.edit(name=f'All Members: {len(member.guild.members)}')
     except:
         pass
-
+'''
     if str(member.guild)=='Netsos':
         #OPENING JSON FILE
         with open('discord_member_info.json','r') as f:
@@ -181,43 +181,31 @@ async def on_member_remove(member):
 
         #WRITING TO JSON FILE
         with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)   
+            json.dump(data,g, indent=4)   '''
 #========================================================
 
 
+@bot.event
+async def on_message(message):
+    
+    if not message.author.bot == True:
+        with open('commands.csv','r') as f:
+            reader=csv.DictReader(f)
+            for line in reader:
+                if line['command'] in str(message.content).lower():
+                    await message.channel.send (f"{message.author.mention} {line['task']} ")
+                    break
+    await bot.process_commands(message)
+    
+
+
+#========================================================
 #Ping Command
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Ping: {int(round(bot.latency*1000,1))}ms')
 #========================================================
  
-
-#Hello Command
-@bot.command(aliases=['hello','hi'])
-async def _hello(ctx ):
-    responses=[ 
-        'Hey',
-        'Hi', 
-        'Hello',
-        'How are you?',
-        'How’s it going',
-        'Konichiwa'
-    ]
-    await ctx.send(choice(responses))
-#========================================================
-
-
-#Bye Command
-@bot.command(aliases=['bye','byebye'])
-async def _bye(ctx):
-    responses=[
-        'Bye',
-        'bye',
-        'Bye. See ya',
-        'See you around'
-    ]
-    await ctx.send(choice(responses))
-#========================================================
 
 
 #Clear Message Command
@@ -235,7 +223,7 @@ async def clear_error(ctx, error):
 
 #USER INFO
 
-@bot.command(name="userinfo", aliases=["memberinfo", "ui", "info"])
+@bot.command(name="uSeRiNfO", aliases=["memberinfo", "ui",'uinfo', "info"])
 async def user_info(ctx, target: Optional[Member]):
     target = target or ctx.author
 
@@ -259,10 +247,12 @@ async def user_info(ctx, target: Optional[Member]):
         embed.add_field(name=name, value=value, inline=inline)
 
     await ctx.send(embed=embed)
+ #========================================================   \
+
 
 #SERVER INFO
 
-@bot.command(name="serverinfo", aliases=['serverinformation', "si"])
+@bot.command(name="sErVeRiNf0", aliases=['serverinformation','sinfo', "si"])
 async def server_info(ctx):
     embed = Embed(title="Server information",
                     colour=ctx.guild.owner.colour,
@@ -295,11 +285,16 @@ async def server_info(ctx):
         embed.add_field(name=name, value=value, inline=inline)
 
     await ctx.send(embed=embed)
+ #========================================================   
+
+
+
 
 
 
 
 bot.run(environ.get('DISCORD_TOKEN'))
+# bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
 
 
     
