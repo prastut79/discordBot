@@ -45,7 +45,7 @@ ANIME_GIRL_GIFS=[
 
 #'''---------------------------START-------------------------------'''
 
-bot = commands.Bot(command_prefix='-', case_insensitive=True)
+bot = commands.Bot(command_prefix=environ.get('BOT_PREFIX'), case_insensitive=True)
 
 #bot Start
 @bot.event
@@ -298,8 +298,8 @@ async def server_info(ctx):
 
 
 
-bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
-# bot.run(environ.get('DISCORD_TOKEN'))
+
+bot.run(environ.get('DISCORD_TOKEN'))
 
 
     
