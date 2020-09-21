@@ -1,4 +1,6 @@
 #https://discordpy.readthedocs.io/en/latest/logging.html
+#https://github.com/netsos798/pybot/blob/master/bot.py
+#https://dashboard.heroku.com/apps/py-bot-discord-798/logs
 
 
 from os import environ
@@ -66,7 +68,7 @@ async def on_ready():
 async def on_member_join(member):
     #WELCOME MESSAGE------------------------------------------------------------
     embed=discord.Embed(color=choice(HEX_COLORS), 
-        description=f'\n{member.mention}, Welcome to **{member.guild}**.:tada:\nMember **#{len(list(member.guild.members))}**'
+        description=f'\n\n{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
         )
     embed.set_thumbnail(url=f'{member.avatar_url}')
     embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
@@ -79,7 +81,7 @@ async def on_member_join(member):
 
 
     #send private message
-    await member.send(f'Welcome {member.mention},\n\n    You have been assigned the role of **`Member`** and **`DJ`**.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
+    await member.send(f'\nWelcome {member.mention},\n\n    You have been assigned the role of **`Member`** and **`DJ`**.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
     await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
 
 
@@ -248,7 +250,7 @@ async def user_info(ctx, target: Optional[Member]):
                 ("Bot?", target.bot, True),
                 ("Top role", target.top_role.mention, True),
                 ("Status", str(target.status).title(), True),
-                ("Activity", f"{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}  **{target.activity.name if target.activity else ''}**", True),
+                ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
                 ("Created at", target.created_at.strftime("%b %d, %Y "), True),
                 ("Joined at", target.joined_at.strftime("%b %d, %Y "), True)]
                 # ("Boosted", bool(target.premium_since), True)]
@@ -296,8 +298,8 @@ async def server_info(ctx):
 
 
 
-
-bot.run(environ.get('DISCORD_TOKEN'))
+bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
+# bot.run(environ.get('DISCORD_TOKEN'))
 
 
     
