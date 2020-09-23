@@ -466,7 +466,7 @@ async def formatcommands(ctx):
     """
     if ctx.author.bot == False:
 
-        zero_bot_channel = bot.get_channel(758014529622900868)
+        zero_bot_channel = bot.get_channel(757231675146108928)
         messages_ = await zero_bot_channel.history(limit=1000).flatten()
         
         all_messages=[i.content for i in messages_]
