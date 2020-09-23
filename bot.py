@@ -44,9 +44,9 @@ ANIME_GIRL_GIFS=[
 ]
 
 #'''---------------------------START-------------------------------'''
-# SERVER_PREFIX=environ.get('BOT_PREFIX')
-SERVER_PREFIX='-'
-# DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
+SERVER_PREFIX=environ.get('BOT_PREFIX')
+# SERVER_PREFIX='-'
+
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 #
 #bot Start
@@ -500,9 +500,9 @@ async def LogOut(ctx):
 
 
 
+DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
+bot.run(DISCORD_TOKEN)
 
-# bot.run(DISCORD_TOKEN)
-bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
 
 
     
