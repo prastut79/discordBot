@@ -245,7 +245,7 @@ async def clear(ctx, amount=0):
 async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send('Sorry you are not allowed to use this command.')
- ========================================================   
+ #========================================================   
 #add COmmand command
 
 
