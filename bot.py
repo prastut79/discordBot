@@ -241,11 +241,11 @@ async def clear(ctx, amount=0):
         await ctx.channel.purge(limit=amount+1)
     # await ctx.send(f'Deleted {amount} messages')
 
-# @clear.error
-# async def clear_error(ctx, error):
-#     if isinstance(error, commands.MissingRole):
-#         await ctx.send('Sorry you are not allowed to use this command.')
- #========================================================   
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send('Sorry you are not allowed to use this command.')
+ ========================================================   
 #add COmmand command
 
 
@@ -269,7 +269,6 @@ async def addcom(ctx, *args):
             cmd= (i.content.strip().split('`',1)[1].split('`',1)[0]).strip()
             command_name=args[0].strip()
             if cmd.lower() == command_name.lower():
-                print(cmd,'----', command_name)
                 dublicate_command=True
                 break
 
@@ -280,26 +279,26 @@ async def addcom(ctx, *args):
         else:
             command_channel = bot.get_channel(757846893375258659)
             zero_bot_commands = bot.get_channel(757231675146108928)
-            if len(args)>=2:
-                command_name=args[0].strip()
-                if command_name[0]==SERVER_PREFIX:
-                    await ctx.send(f'{ctx.message.author.mention}\nPlease donot use Server Prefix as a Custom Command Prefix')
-                else:
-                    action=(' '.join(args[1:])).strip()
-                    spaces= ' '*(18-(len(command_name)))
-                    await zero_bot_commands.send(f'` {command_name} `{spaces}   **{action}**')
-                    await command_channel.send(f'{command_name}{" "*5}{action}{" "*5}**AddedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
-                    
-                    await ctx.send(f'{ctx.message.author.mention}\nThe Command ` {command_name} ` was added.')
-            
+            # if len(args)>=2:
+            command_name=args[0].strip()
+            if command_name[0]==SERVER_PREFIX:
+                await ctx.send(f'{ctx.message.author.mention}\nPlease donot use Server Prefix as a Custom Command Prefix')
             else:
-                await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
+                action=(' '.join(args[1:])).strip()
+                spaces= ' '*(18-(len(command_name)))
+                await zero_bot_commands.send(f'` {command_name} `{spaces}   **{action}**')
+                await command_channel.send(f'{command_name}{" "*5}{action}{" "*5}**AddedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
+                
+                await ctx.send(f'{ctx.message.author.mention}\nThe Command ` {command_name} ` was added.')
+            
+            # else:
+            #     await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
 
 @addcom.error
 async def addcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
         await ctx.send(f'{ctx.message.author.mention}, you are not allowed to use this Command.')
-    elif isinstance(error, commands.errors):
+    elif isinstance(error, commands.errors) or isinstance(error, commands.errors.IndexError):
         await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
  #========================================================  
 #Delete COmmand command
@@ -356,7 +355,7 @@ async def delcom(ctx, command):
 async def delcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
         await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
-    elif isinstance(error, commands.errors):
+    elif isinstance(error, commands.errors) or isinstance(error, commands.errors.IndexError):
         await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
  #========================================================  
 #USER INFO
@@ -458,7 +457,7 @@ async def say(ctx, *args):
  #========================================================   
 
 #FORMAT COMMANDS
-@bot.command(name='FormatCommand', aliases=['forcom','fcom','formatcom', 'formatcommands'])
+@bot.command(name='FormatCommand', aliases=['forcom','fcom','formatcom', 'formatcommands'
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 async def formatcommands(ctx):
     """
@@ -478,6 +477,7 @@ async def formatcommands(ctx):
         for i in all_messages:
             await zero_bot_channel.send(i)
             await asyncio.sleep(1.2)
+        await ctx.send(f'{ctx.author.mention}\nAll Comments Updated')
 
 
 @bot.command(name='LogOutBot', aliases=['logout','close'])
