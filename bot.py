@@ -85,7 +85,7 @@ async def on_member_join(member):
 
 
     #send private message
-    await member.send(f'\nWelcome {member.mention},\n\n    You have been assigned the role of **`Member`** and **`DJ`**.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
+    await member.send(f'\nWelcome {member.mention},\n\n    You have been assigned the role of **`Member`**.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
     await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
 
 
@@ -98,8 +98,7 @@ async def on_member_join(member):
     #-----------------------------------------------------------#WELCOME MESSAGE
     #GIVE DJ AND MEMBER ROLE ON JOIN
     role_member = discord.utils.get(member.guild.roles, name='Member')
-    role_dj = discord.utils.get(member.guild.roles, name='DJ')
-    await member.add_roles(role_member, role_dj)
+    await member.add_roles(role_member)
 
 '''
      #OPENING JSON FILE
@@ -198,14 +197,18 @@ async def on_message(message):
         commands_ = await channel.history(limit=1000).flatten()
 
         for i in commands_:
+
             try:
-                cmd= ((i.content.strip().split('`',1)[1].split('`',1)[0]))
-                i=i.content.strip()
-                if str(message.content).lower().strip()==cmd.lower().strip():
+
+                cmd= (i.content.strip().split('`',1)[1].split('`',1)[0]).strip()
+                i=i.content
+
+                if message.content.lower().strip()==cmd.lower().strip():
 
                     action=(i.split('`',1)[1].split('`',1)[1]).strip()
                     action=action.replace('[user]',f' {message.author.mention} ')
-                    await message.channel.send(action[2:-2])
+                    action=action[2:-2]
+                    await message.channel.send(action)
                     break
             except IndexError:
                 await i.delete()
@@ -470,17 +473,23 @@ async def formatcommands(ctx):
 
         zero_bot_channel = bot.get_channel(757231675146108928)
         messages_ = await zero_bot_channel.history(limit=1000).flatten()
+
+        all_messages=[]
+        for i in messages_:
+            if not i.id ==(758232573205020693):
+                all_messages.append(i.content)
+
         
-        all_messages=[i.content for i in messages_]
         all_messages.reverse()
 
-        await zero_bot_channel.purge(limit=len(messages_))
+        await zero_bot_channel.purge(limit=len(all_messages))
 
 
         for i in all_messages:
             await zero_bot_channel.send(i)
             await asyncio.sleep(1.2)
         await ctx.send(f'{ctx.author.mention}\nAll Comments Updated')
+        
 
 
 @bot.command(name='LogOutBot', aliases=['logout','close'])
@@ -505,6 +514,7 @@ async def LogOut(ctx):
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 bot.run(DISCORD_TOKEN)
+
 
 
 
