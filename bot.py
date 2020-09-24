@@ -66,7 +66,7 @@ async def on_ready():
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
 #========================================================
 #Serve Join
-bot.remove_command('delcom')
+
 
 @bot.event#member.id
 async def on_member_join(member):
@@ -85,14 +85,16 @@ async def on_member_join(member):
 
 
     #send private message
-    await member.send(f'\nWelcome {member.mention},\n\n    You have been assigned the role of **`Member`**.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
+    await member.send(f'\nWelcome {member.mention},\n\n    ThankYou For Joining.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
     await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
 
 
 
-
-    channel = member.guild.get_channel(757225313943027772)
-    await channel.edit(name=f'All Members: {len(member.guild.members)}')
+    try:
+        channel = member.guild.get_channel(757225313943027772)
+        await channel.edit(name=f'All Members: {len(member.guild.members)+1}')
+    except:
+        pass
 
 
     #-----------------------------------------------------------#WELCOME MESSAGE
@@ -164,7 +166,7 @@ async def on_member_remove(member):
     #TOTAL MEMBERS COUNT
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'All Members: {len(member.guild.members)}')
+        await channel.edit(name=f'All Members: {len(member.guild.members)+1}')
     except:
         pass
 '''
@@ -209,11 +211,12 @@ async def on_message(message):
                     action=action.replace('[user]',f' {message.author.mention} ')
                     action=action[2:-2]
                     await message.channel.send(action)
+                    await asyncio.sleep(1)
                     break
             except IndexError:
                 await i.delete()
 
-        await asyncio.sleep(5)
+        
         
         await bot.process_commands(message)
 
@@ -242,7 +245,9 @@ async def clear(ctx, amount=0):
     Delete Messages
     """
     if ctx.author.bot == False:
-        await ctx.channel.purge(limit=amount+1)
+        for i in range(1,amount+2,1):
+            await ctx.channel.purge(limit=i)
+            await asyncio.sleep(0.3)
     # await ctx.send(f'Deleted {amount} messages')
 
 @clear.error
@@ -307,7 +312,7 @@ async def addcom_error(ctx, error):
 #Delete COmmand command
 
 
-@bot.command(name='DeleteCommand', aliases=['delcom'])
+@bot.command(name='DeleteCustomCommand', aliases=['delcom','deletecommand','rmcom'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 
 async def delcom(ctx,*, command):
@@ -448,12 +453,15 @@ async def say(ctx, *args):
     """
     
     if ctx.author.bot == False:
+
         if args[0][0] == (f'{SERVER_PREFIX}'):
-            count=args[0][-1]
+            
             try:
+                count=args[0][1]
                 for i in range(int(count)):
                     send=' '.join(list(args)[1:])
                     await ctx.send(send)
+                    await asyncio.sleep(1)
             except:
                 send=' '.join(list(args))
                 await ctx.send(send)
@@ -487,7 +495,7 @@ async def formatcommands(ctx):
 
         for i in all_messages:
             await zero_bot_channel.send(i)
-            await asyncio.sleep(1.2)
+            await asyncio.sleep(1)
         await ctx.send(f'{ctx.author.mention}\nAll Comments Updated')
         
 
