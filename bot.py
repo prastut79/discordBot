@@ -96,7 +96,7 @@ async def on_member_join(member):
         await channel.edit(name=f':adult:｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
     except:
         memberr = await bot.fetch_user(483179796323631115)
-        await memberr.send(f'Couldn\'n change the total member count)
+        await memberr.send(f'Couldn\'n change the total member count')
 
 
     #-----------------------------------------------------------#WELCOME MESSAGE
