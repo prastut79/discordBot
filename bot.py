@@ -83,18 +83,20 @@ async def on_member_join(member):
 
     await channel.send(embed=embed)
 
-
-    #send private message
-    await member.send(f'\nWelcome {member.mention},\n\n    ThankYou For Joining.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
-    await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
-
+    try:
+        #send private message
+        await member.send(f'\nWelcome {member.mention},\n\n    ThankYou For Joining.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
+        await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
+    except:
+        pass
 
 
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'All Members: {len(member.guild.members)+1}')
+        await channel.edit(name=f':adult:｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
     except:
-        pass
+        memberr = await bot.fetch_user(483179796323631115)
+        await memberr.send(f'Couldn\'n change the total member count)
 
 
     #-----------------------------------------------------------#WELCOME MESSAGE
@@ -166,10 +168,13 @@ async def on_member_remove(member):
     #TOTAL MEMBERS COUNT
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'All Members: {len(member.guild.members)+1}')
+        await channel.edit(name=f':adult:｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
     except:
-        pass
-'''
+        memberr = await bot.fetch_user(483179796323631115)
+        await memberr.send(f'Couldn\'n change the total member count')
+    
+    
+    '''
     if str(member.guild)=='Netsos':
         #OPENING JSON FILE
         with open('discord_member_info.json','r') as f:
@@ -186,7 +191,8 @@ async def on_member_remove(member):
 
         #WRITING TO JSON FILE
         with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)   '''
+            json.dump(data,g, indent=4)   
+            '''
 #========================================================
 #ON MESSAGE
 
@@ -217,7 +223,6 @@ async def on_message(message):
                 await i.delete()
 
         
-        
         await bot.process_commands(message)
 
 
@@ -245,9 +250,7 @@ async def clear(ctx, amount=0):
     Delete Messages
     """
     if ctx.author.bot == False:
-        for i in range(1,amount+2,1):
-            await ctx.channel.purge(limit=i)
-            await asyncio.sleep(0.3)
+        await ctx.channel.purge(limit=amount+1)
     # await ctx.send(f'Deleted {amount} messages')
 
 @clear.error
