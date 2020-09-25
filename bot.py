@@ -93,7 +93,7 @@ async def on_member_join(member):
 
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f':adult:｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
+        await channel.edit(name=f'🧑｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
     except:
         memberr = await bot.fetch_user(483179796323631115)
         await memberr.send(f'Couldn\'n change the total member count')
@@ -168,7 +168,7 @@ async def on_member_remove(member):
     #TOTAL MEMBERS COUNT
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f':adult:｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
+        await channel.edit(name=f'🧑｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
     except:
         memberr = await bot.fetch_user(483179796323631115)
         await memberr.send(f'Couldn\'n change the total member count')
@@ -519,9 +519,15 @@ async def LogOut(ctx):
 
 
 
-
-
-
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    # if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+    #     pass
+        
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 bot.run(DISCORD_TOKEN)
