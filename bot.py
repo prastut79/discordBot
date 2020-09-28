@@ -23,25 +23,6 @@ HEX_COLORS=[
     0x7F2982, 0x16001E, 0x610345, 0x044B7F, 0xF05365, 0xA1CDF1, 0xC3A197, 0xDBE4EE, 0xdeaaff, 0x00296b
 ]
 
-ANIME_GIRL_GIFS=[
-    'https://tenor.com/view/welcome-anime-smile-pretty-cute-gif-16579247',
-    'https://tenor.com/view/anime-love-smiling-menhera-hearts-gif-12479110',
-    'https://media1.tenor.com/images/528bb500b7d0cba55047ef0122e7f093/tenor.gif?itemid=14298094',
-    'https://tenor.com/view/anime-welcome-home-master-gif-7922606',
-    'https://tenor.com/view/welcome-home-anime-wave-smile-welcome-gif-15859070',
-    'https://tenor.com/view/welcome-anime-mask-greetings-gif-17495343',
-    'https://tenor.com/view/anime-animu-welcome-gif-15151790',
-    'https://tenor.com/view/anime-animegirl-happy-gif-8273080',
-    'https://tenor.com/view/anime-bed-sleep-animegirl-coffee-tea-relax-anime-anime-girl-gif-13116453',
-    'https://tenor.com/view/anime-girl-girls-animegirl-red-gif-5578936',
-    'https://tenor.com/view/anime-welcome-gif-4505891',
-    'https://media.tenor.com/images/0916a65deb648ea999661c349441c8d2/tenor.gif',
-    'https://media.tenor.com/images/07ef31853915cbdd38577d7ea82936de/tenor.gif',
-    'https://tenor.com/view/anime-girl-keijo-anime-girl-kiss-gif-16974725',
-    'https://tenor.com/view/gochiusa-welcome-anime-cute-gif-15822198',
-    'https://tenor.com/view/anime-girl-gif-18150239',
-    'https://tenor.com/view/anime-animegirl-happy-gif-8273080'
-]
 
 #'''---------------------------START-------------------------------'''
 SERVER_PREFIX=environ.get('BOT_PREFIX')
@@ -86,7 +67,11 @@ async def on_member_join(member):
     try:
         #send private message
         await member.send(f'\nWelcome {member.mention},\n\n    ThankYou For Joining.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
-        await member.send(choice(ANIME_GIRL_GIFS))         #SEND GIFs
+        with open('welcom_gifs.txt','r') as f:
+            reader=f.readlines()
+            gif_to_send=choice(reader)
+        
+        await member.send(gif_to_send)         #SEND GIFs
     except:
         pass
 
@@ -250,8 +235,10 @@ async def clear(ctx, amount=0):
     Delete Messages
     """
     if ctx.author.bot == False:
-        await ctx.channel.purge(limit=amount+1)
-    # await ctx.send(f'Deleted {amount} messages')
+        if amount<100:
+            await ctx.channel.purge(limit=amount+1)
+        else:
+            await ctx.channel.purge(limit=99+1)
 
 @clear.error
 async def clear_error(ctx, error):
@@ -363,15 +350,17 @@ async def delcom(ctx,*, command):
             await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
     
-
+try:   
+    @delcom.error
+    async def delcom_error(ctx, error):
+        if isinstance(error, commands.errors.MissingAnyRole):
+            await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
+        elif isinstance(error, commands.errors):
+            await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
     
-@delcom.error
-async def delcom_error(ctx, error):
-    if isinstance(error, commands.errors.MissingAnyRole):
-        await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
-    elif isinstance(error, commands.errors):
-        await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
- #========================================================  
+except:
+    pass
+#========================================================  
 #USER INFO
 
 
@@ -464,14 +453,14 @@ async def say(ctx, *args):
                 for i in range(int(count)):
                     send=' '.join(list(args)[1:])
                     await ctx.send(send)
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(0.5)
             except:
                 send=' '.join(list(args))
                 await ctx.send(send)
         else:
             send=' '.join(list(args))
             await ctx.send(send)
- #========================================================   
+ #========================================================
 
 #FORMAT COMMANDS
 @bot.command(name='FormatCommand', aliases=['forcom','fcom','formatcom', 'formatcommands'])
@@ -523,8 +512,7 @@ async def LogOut(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         pass
-    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
+
     # if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
     #     pass
         
