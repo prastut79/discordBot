@@ -25,8 +25,8 @@ HEX_COLORS=[
 
 
 #'''---------------------------START-------------------------------'''
-SERVER_PREFIX=environ.get('BOT_PREFIX')
-# SERVER_PREFIX='-'
+# SERVER_PREFIX=environ.get('BOT_PREFIX')
+SERVER_PREFIX='-'
 
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 
@@ -372,33 +372,24 @@ async def user_info(ctx, target: Optional[Member]):
         target = target or ctx.author
 
         embed = Embed(title="User Information",
-                        colour=target.colour,
-                        timestamp=datetime.utcnow())
+                        colour=target.colour)
 
         embed.set_thumbnail(url=target.avatar_url)
 
-        fields = [  ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-                    
+        fields = [                    
                     ("Name", f'{str(target)} {"**Bot**" if target.bot else ""}', True),
                     ('Nickname', str(target.nick),True),
                     ("Top role", target.top_role.mention, True),
 
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-
                     ("Status", str(target.status).title(), True),
                     ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
-                    ("Joined at", target.joined_at.strftime("%b %d, %Y "), True)
+                    ("Joined at", target.joined_at.strftime("%b %d, %Y "), False)
+                    
 
                     # ("Created at", target.created_at.strftime("%b %d, %Y "), True),
                     # ("Boosted", bool(target.premium_since), True)
                     # # ("ID", target.id, True)
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
+
                 ]
                     
                 
@@ -418,9 +409,8 @@ async def server_info(ctx):
     All the Information about the server.
     """
     if ctx.author.bot == False:
-        embed = Embed(title="Server Information",
-                        colour=ctx.guild.owner.colour,
-                        timestamp=datetime.utcnow())
+        embed = Embed(title="Server Information\n\n",
+                        colour=ctx.guild.owner.colour)
 
         embed.set_thumbnail(url=ctx.guild.icon_url)
 
@@ -430,11 +420,9 @@ async def server_info(ctx):
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
         fields =[
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
-                    ("\u200b", "\u200b", True),
                     
-                    ("Owner", f'{ctx.guild.owner}', True),
+                    
+                    ("Owner", f'{ctx.guild.owner.mention}', True),
                     ("Region", f'{str(ctx.guild.region).title()}', True),
                     ("Created on", ctx.guild.created_at.strftime("%b %d, %Y "), True),
                     
@@ -447,13 +435,14 @@ async def server_info(ctx):
                     ("Voice channels", len(ctx.guild.voice_channels), True),
                     
 
-                    ("\u200b",f"**🟢 {statuses[0]}    🟠 {statuses[1]}    🔴 {statuses[2]}    ⚪ {statuses[3]}**", True),
+                    ("\u200b",f"**🟢 {statuses[0]}｜🟠 {statuses[1]}｜🔴 {statuses[2]}｜⚪ {statuses[3]}**", False),
                     
 
                     # ("ID", f'{ctx.guild.id}', True),
                     # ("Members", len(ctx.guild.members), True),
                     # ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),
                     # ("Invites", len(await ctx.guild.invites()), True),
+                    
                 ]
 
         for name, value, inline in fields:
@@ -531,6 +520,17 @@ async def LogOut(ctx):
         await bot.close()
 
 
+#CHoose between objects
+@bot.command(name='Choice', aliases=['choose','rand'])
+async def choise(ctx, *args):
+    """
+    Choose between different options
+    """
+
+    await ctx.send(f'{ctx.author.mention}\n> {choice(args)}')
+
+
+
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -540,9 +540,11 @@ async def on_command_error(ctx, error):
         pass
     if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
         pass
-        
 
-DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
+
+
+DISCORD_TOKEN =  'NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ'
+#environ.get('DISCORD_TOKEN')
 bot.run(DISCORD_TOKEN)
 
 
