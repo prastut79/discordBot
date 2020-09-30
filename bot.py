@@ -302,7 +302,7 @@ async def addcom_error(ctx, error):
 #Delete COmmand command
 
 
-@bot.command(name='DeleteCustomCommand', aliases=['delcom','deletecommand','rmcom'])
+@bot.command(name='DeleteCustomCommand', aliases=['delcom','deletecommand'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 
 async def delcom(ctx,*, command):
@@ -349,23 +349,20 @@ async def delcom(ctx,*, command):
         except IndexError:
             await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
-    
-try:   
-    @delcom.error
-    async def delcom_error(ctx, error):
-        if isinstance(error, commands.errors.MissingAnyRole):
-            await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
-        elif isinstance(error, commands.errors):
-            await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
-    
-except:
-    pass
+
+@delcom.error
+async def delcom_error(ctx, error):
+    if isinstance(error, commands.errors.MissingAnyRole):
+        await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
+    elif isinstance(error, commands.errors):
+        await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
+
 #========================================================  
 #USER INFO
 
 
 
-@bot.command(name="UserInformation", aliases=["memberinfo", "ui",'uinfo', "info"])
+@bot.command(name="UserInformation", aliases=["userinfo", "ui"])
 async def user_info(ctx, target: Optional[Member]):
     """
     All the Information about the User
@@ -380,15 +377,31 @@ async def user_info(ctx, target: Optional[Member]):
 
         embed.set_thumbnail(url=target.avatar_url)
 
-        fields = [("Name", str(target), True),
-                    ("ID", target.id, True),
-                    ("Bot?", target.bot, True),
+        fields = [  ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    
+                    ("Name", f'{str(target)} {"**Bot**" if target.bot else ""}', True),
+                    ('Nickname', str(target.nick),True),
                     ("Top role", target.top_role.mention, True),
+
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+
                     ("Status", str(target.status).title(), True),
                     ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
-                    ("Created at", target.created_at.strftime("%b %d, %Y "), True),
-                    ("Joined at", target.joined_at.strftime("%b %d, %Y "), True)]
-                    # ("Boosted", bool(target.premium_since), True)]
+                    ("Joined at", target.joined_at.strftime("%b %d, %Y "), True)
+
+                    # ("Created at", target.created_at.strftime("%b %d, %Y "), True),
+                    # ("Boosted", bool(target.premium_since), True)
+                    # # ("ID", target.id, True)
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                ]
+                    
+                
 
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
@@ -399,7 +412,7 @@ async def user_info(ctx, target: Optional[Member]):
 
 
 
-@bot.command(name="ServerInf0rmation", aliases=['serverinformation','serverinfo','sinfo', "si"])
+@bot.command(name="ServerInformation", aliases=['serverinfo', "si"])
 async def server_info(ctx):
     """
     All the Information about the server.
@@ -416,21 +429,32 @@ async def server_info(ctx):
                     len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
-        fields = [("ID", ctx.guild.id, True),
-                    ("Owner", ctx.guild.owner, True),
-                    ("Region", str(ctx.guild.region).title(), True),
-                    ("Created on", ctx.guild.created_at.strftime("%b %d, %Y %H:%M:%S"), True),
-                    ("Members", len(ctx.guild.members), True),
-                    ("Humans", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
-                    ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),
-                    ("Banned members", len(await ctx.guild.bans()), True),
-                    ("Statuses", f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", True),
+        fields =[
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    ("\u200b", "\u200b", True),
+                    
+                    ("Owner", f'{ctx.guild.owner}', True),
+                    ("Region", f'{str(ctx.guild.region).title()}', True),
+                    ("Created on", ctx.guild.created_at.strftime("%b %d, %Y "), True),
+                    
+                    ("Members", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
+                    ("Roles", len(ctx.guild.roles), True),
+                    ("Banned", len(await ctx.guild.bans()), True),
+
+                    ("Categories", len(ctx.guild.categories), True),
                     ("Text channels", len(ctx.guild.text_channels), True),
                     ("Voice channels", len(ctx.guild.voice_channels), True),
-                    ("Categories", len(ctx.guild.categories), True),
-                    ("Roles", len(ctx.guild.roles), True),
-                    ("Invites", len(await ctx.guild.invites()), True),
-                    ("\u200b", "\u200b", True)]
+                    
+
+                    ("\u200b",f"**🟢 {statuses[0]}    🟠 {statuses[1]}    🔴 {statuses[2]}    ⚪ {statuses[3]}**", True),
+                    
+
+                    # ("ID", f'{ctx.guild.id}', True),
+                    # ("Members", len(ctx.guild.members), True),
+                    # ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),
+                    # ("Invites", len(await ctx.guild.invites()), True),
+                ]
 
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
@@ -463,7 +487,7 @@ async def say(ctx, *args):
  #========================================================
 
 #FORMAT COMMANDS
-@bot.command(name='FormatCommand', aliases=['forcom','fcom','formatcom', 'formatcommands'])
+@bot.command(name='FormatCommand', aliases=['forcom','formatcommands'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 async def formatcommands(ctx):
     """
@@ -512,9 +536,10 @@ async def LogOut(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         pass
-
-    # if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-    #     pass
+    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
         
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
