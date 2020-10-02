@@ -85,52 +85,11 @@ async def on_member_join(member):
 
 
     #-----------------------------------------------------------#WELCOME MESSAGE
-    #GIVE DJ AND MEMBER ROLE ON JOIN
+    #GIVE MEMBER ROLE ON JOIN
     role_member = discord.utils.get(member.guild.roles, name='Member')
     await member.add_roles(role_member)
 
-'''
-     #OPENING JSON FILE
-    with open('discord_member_info.json','r') as f:
-        data=json.load(f)
 
-    if str(member.guild)=='Netsos':
-        #when joining
-        new_user=True
-        for i in data['members_info']:
-            if i['user_id']==member.id:
-                i['name'].append(member.name+'#'+member.discriminator)
-                i["member_count"].append(len(list(member.guild.members)))
-                i['joined_status']=True
-                i['joined_date'].append(str(datetime.utcnow())+' UTC')
-                i['join_count']+=1
-                i["nicknames"].append(member.nick)
-                i['leave_status']=False
-
-                new_user=False
-                break
-            
-
-        if new_user:
-            dic={
-                    "user_id": member.id,
-                    "name": [member.name+'#'+member.discriminator],
-                    "member_count": [len(list(member.guild.members))],
-                    "joined_status": True,
-                    "joined_date": [str(datetime.utcnow())+' UTC'],
-                    "join_count": 1,
-                    "leave_status": False,
-                    "leave_date": [],
-                    "leave_count": 0,
-                    "roles": [],
-                    "nicknames": [member.nick]
-                }
-            data['members_info'].append(dic)
-
-        
-        #WRITING TO JSON FILE
-        with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)'''
 #========================================================
 #Server Leave
 
@@ -159,25 +118,7 @@ async def on_member_remove(member):
         await memberr.send(f'Couldn\'n change the total member count')
     
     
-    '''
-    if str(member.guild)=='Netsos':
-        #OPENING JSON FILE
-        with open('discord_member_info.json','r') as f:
-            data=json.load(f)
-
-        #when leaving
-        for i in data['members_info']:
-            if i['user_id']==member.id:
-                i['leave_status']=True
-                i['leave_date'].append(str(datetime.utcnow())+' UTC')
-                i['leave_status']=True
-                i['leave_count']+=1
-                break
-
-        #WRITING TO JSON FILE
-        with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)   
-            '''
+    
 #========================================================
 #ON MESSAGE
 
@@ -228,22 +169,23 @@ async def _bot_ping(ctx):
 
 
 #Clear Message Command
-@bot.command(name='ClearMessages',  aliases=['clear','clearmsg'])
+@bot.command(name='ClearMessages',  aliases=['clear','clearmsg','cls'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 async def clear(ctx, amount=0):
     """
     Delete Messages
     """
+
     if ctx.author.bot == False:
         if amount<100:
             await ctx.channel.purge(limit=amount+1)
         else:
-            await ctx.channel.purge(limit=99+1)
+            await ctx.channel.purge(limit=100)
 
 @clear.error
 async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRole):
-        await ctx.send('Sorry you are not allowed to use this command.')
+        pass
  #========================================================   
 #add COmmand command
 
@@ -295,7 +237,7 @@ async def addcom(ctx, *args):
 @addcom.error
 async def addcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
-        await ctx.send(f'{ctx.message.author.mention}, you are not allowed to use this Command.')
+        pass
     elif isinstance(error, commands.errors):
         await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
  #========================================================  
@@ -353,7 +295,7 @@ async def delcom(ctx,*, command):
 @delcom.error
 async def delcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
-        await ctx.send(f'{ctx.message.author.mention}, you are not allowed to delete Commands.')
+        pass
     elif isinstance(error, commands.errors):
         await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
@@ -409,7 +351,7 @@ async def server_info(ctx):
     All the Information about the server.
     """
     if ctx.author.bot == False:
-        embed = Embed(title="Server Information\n\n",
+        embed = Embed(title="Server Information",
                         colour=ctx.guild.owner.colour)
 
         embed.set_thumbnail(url=ctx.guild.icon_url)
@@ -521,10 +463,10 @@ async def LogOut(ctx):
 
 
 #CHoose between objects
-@bot.command(name='Choice', aliases=['choose','rand'])
+@bot.command(name='Choice', aliases=['choose','rnd'])
 async def choise(ctx, *args):
     """
-    Choose between different options
+    Choose between different items.
     """
 
     await ctx.send(f'{ctx.author.mention}\n> {choice(args)}')
@@ -543,8 +485,8 @@ async def on_command_error(ctx, error):
 
 
 
-DISCORD_TOKEN =  'NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ'
-#environ.get('DISCORD_TOKEN')
+DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
+
 bot.run(DISCORD_TOKEN)
 
 
@@ -552,4 +494,73 @@ bot.run(DISCORD_TOKEN)
 
 
     
-  
+#JSON JOINN AND LEAVE  
+'''
+    if str(member.guild)=='Netsos':
+        #OPENING JSON FILE
+        with open('discord_member_info.json','r') as f:
+            data=json.load(f)
+
+        #when leaving
+        for i in data['members_info']:
+            if i['user_id']==member.id:
+                i['leave_status']=True
+                i['leave_date'].append(str(datetime.utcnow())+' UTC')
+                i['leave_status']=True
+                i['leave_count']+=1
+                break
+
+        #WRITING TO JSON FILE
+        with open('discord_member_info.json','w') as g:
+            json.dump(data,g, indent=4)   
+    
+     #OPENING JSON FILE
+    with open('discord_member_info.json','r') as f:
+        data=json.load(f)
+
+    if str(member.guild)=='Netsos':
+        #when joining
+        new_user=True
+        for i in data['members_info']:
+            if i['user_id']==member.id:
+                i['name'].append(member.name+'#'+member.discriminator)
+                i["member_count"].append(len(list(member.guild.members)))
+                i['joined_status']=True
+                i['joined_date'].append(str(datetime.utcnow())+' UTC')
+                i['join_count']+=1
+                i["nicknames"].append(member.nick)
+                i['leave_status']=False
+
+                new_user=False
+                break
+            
+
+        if new_user:
+            dic={
+                    "user_id": member.id,
+                    "name": [member.name+'#'+member.discriminator],
+                    "member_count": [len(list(member.guild.members))],
+                    "joined_status": True,
+                    "joined_date": [str(datetime.utcnow())+' UTC'],
+                    "join_count": 1,
+                    "leave_status": False,
+                    "leave_date": [],
+                    "leave_count": 0,
+                    "roles": [],
+                    "nicknames": [member.nick]
+                }
+            data['members_info'].append(dic)
+
+        
+        #WRITING TO JSON FILE
+        with open('discord_member_info.json','w') as g:
+            json.dump(data,g, indent=4)
+            '''
+
+    #'Member': 756428207200403477,
+    # 'OP': 756534460173779044,
+    # '🛡️│Bots': 756429809759813683,
+    # 'GUYZ': 756487678668701747,
+    # 'MOD': 756410200172396595,
+    # 'ADMIN': 756398801874321408,
+    # '乙乇尺回': 756435470623309836
