@@ -63,11 +63,13 @@ async def on_member_join(member):
     channel = member.guild.get_channel(756417893314461766)
 
     await channel.send(embed=embed)
-    inv_link = await member.guild.create_invite(max_age=0, max_uses=0)
+
+    #create inv link
+    inv_link = await channel.create_invite(max_age=0, max_uses=0)
     
     try:
         #send private message
-        await member.send(f'Welcome {member.mention},\n\n Have a great time here in **{member.guild}**\n\n    Enjoy Life:tada:\n\n    Here is the Invitation Link to this Server:\n{inv_link}')
+        await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
             gif_to_send=choice(reader)
@@ -545,7 +547,7 @@ async def zero(ctx):
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
-bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
+bot.run(DISCORD_TOKEN)
 
 
 
