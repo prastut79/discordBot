@@ -63,10 +63,11 @@ async def on_member_join(member):
     channel = member.guild.get_channel(756417893314461766)
 
     await channel.send(embed=embed)
-
+    inv_link = await member.guild.create_invite(max_age=0, max_uses=0)
+    
     try:
         #send private message
-        await member.send(f'Welcome {member.mention},\n\n Have a great time here in **{member.guild}**\n\n    Enjoy Life:tada:\n\n    Here is the invitation link to this server:\n    https://discord.gg/X64nvv6')
+        await member.send(f'Welcome {member.mention},\n\n Have a great time here in **{member.guild}**\n\n    Enjoy Life:tada:\n\n    Here is the Invitation Link to this Server:\n{inv_link}')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
             gif_to_send=choice(reader)
@@ -496,10 +497,14 @@ async def roll(ctx,a,b=0):
     except:
         pass
 
-@bot.command()
+@bot.command(name="Invitaion",aliases=['cinv','invitationlink',])
 async def inv(ctx):
+    """
+    Create a Invitaion Link for the Server.
+    """
     inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0)
     await ctx.send(inv_link)
+    
 
 
 #print Zer0
