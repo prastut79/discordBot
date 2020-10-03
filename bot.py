@@ -66,7 +66,7 @@ async def on_member_join(member):
 
     try:
         #send private message
-        await member.send(f'\nWelcome {member.mention},\n\n    ThankYou For Joining.\n\n    Have a great time here in **{member.guild}**\n\n    Enjoy:tada:\n\n    Also, Invite your friends to this server:\n    https://discord.gg/X64nvv6')
+        await member.send(f'Welcome {member.mention},\n\n Have a great time here in **{member.guild}**\n\n    Enjoy Life:tada:\n\n    Here is the invitation link to this server:\n    https://discord.gg/X64nvv6')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
             gif_to_send=choice(reader)
@@ -216,30 +216,30 @@ async def addcom(ctx, *args):
 
             #adding command only if it already hasnt been added
             if dublicate_command:
-                await ctx.send(f'{ctx.message.author.mention}\nThe Command has already been added.')
+                await ctx.send(f':exclamation: The Command has already been added.')
             else:
                 command_channel = bot.get_channel(757846893375258659)
                 zero_bot_commands = bot.get_channel(757231675146108928)
                 # if len(args)>=2:
                 command_name=args[0].strip()
                 if command_name[0]==SERVER_PREFIX:
-                    await ctx.send(f'{ctx.message.author.mention}\nPlease donot use Server Prefix as a Custom Command Prefix')
+                    await ctx.send(f':exclamation: Please donot use Server Prefix as a Custom Command Prefix')
                 else:
                     action=(' '.join(args[1:])).strip()
                     spaces= ' '*(18-(len(command_name)))
                     await zero_bot_commands.send(f'` {command_name} `{spaces}   **{action}**')
                     await command_channel.send(f'{command_name}{" "*5}{action}{" "*5}**AddedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
                     
-                    await ctx.send(f'{ctx.message.author.mention}\nThe Command ` {command_name} ` was added.')
+                    await ctx.message.add_reaction('☑')
         except IndexError:
-            await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
+            await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
 
 @addcom.error
 async def addcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
         pass
     elif isinstance(error, commands.errors):
-        await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t added.\nThe CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
+        await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
  #========================================================  
 #Delete COmmand command
 
@@ -264,8 +264,8 @@ async def delcom(ctx,*, command):
                 if command.lower() == cmd.lower():
                     command_found=True
                     await i.delete()
-                    await ctx.send(f'{ctx.message.author.mention}\nThe command `{command}` has been deleted.')
-
+                    await ctx.message.add_reaction('☑')
+                    
                     #channel where deleted commands are stored
                     channel = bot.get_channel(757955355736014848)    
                     await channel.send(f'{i.content} **DeletedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
@@ -285,11 +285,11 @@ async def delcom(ctx,*, command):
                         break
 
             else:
-                await ctx.send(f'{ctx.message.author.mention}\nCommand not Found')
+                await ctx.send(f'{ctx.message.author.mention}\n:x: Command not Found')
 
 
         except IndexError:
-            await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
+            await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
 
 @delcom.error
@@ -297,7 +297,7 @@ async def delcom_error(ctx, error):
     if isinstance(error, commands.errors.MissingAnyRole):
         pass
     elif isinstance(error, commands.errors):
-        await ctx.send(f'{ctx.message.author.mention}\nThe Command wasn\'t delete.\nThe CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
+        await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
 #========================================================  
 #USER INFO
@@ -345,7 +345,7 @@ async def user_info(ctx, target: Optional[Member]):
 
 
 
-@bot.command(name="ServerInformation", aliases=['serverinfo', "si"])
+@bot.command(name="ServerInformation", aliases=['serverinfo', 'si'])
 async def server_info(ctx):
     """
     All the Information about the server.
@@ -372,7 +372,7 @@ async def server_info(ctx):
                     ("Roles", len(ctx.guild.roles), True),
                     ("Banned", len(await ctx.guild.bans()), True),
 
-                    ("Categories", len(ctx.guild.categories), True),
+                    ("Emojis", len(ctx.guild.emojis), True),
                     ("Text channels", len(ctx.guild.text_channels), True),
                     ("Voice channels", len(ctx.guild.voice_channels), True),
                     
@@ -443,7 +443,7 @@ async def formatcommands(ctx):
         for i in all_messages:
             await zero_bot_channel.send(i)
             await asyncio.sleep(1)
-        await ctx.send(f'{ctx.author.mention}\nAll Comments Updated')
+        await ctx.message.add_reaction('☑')
         
 
 
@@ -456,14 +456,14 @@ async def LogOut(ctx):
     if ctx.author.bot == False:
         memberr = await bot.fetch_user(483179796323631115)
         
-
+        await ctx.message.add_reaction('☑')
         await memberr.send(f'Logged Out by: **{ctx.author.id}** || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
         await ctx.send(f'Bye Bye')
         await bot.close()
 
 
 #CHoose between objects
-@bot.command(name='Choice', aliases=['choose','rnd'])
+@bot.command(name='Choice', aliases=['choose','chs'])
 async def choise(ctx, *args):
     """
     Choose between different items.
@@ -471,23 +471,76 @@ async def choise(ctx, *args):
 
     await ctx.send(f'{ctx.author.mention}\n> {choice(args)}')
 
+#Roll Random Numbers
+@bot.command(name='RollNumber', aliases=['roll','rnd'])
+async def roll(ctx,a,b=0):
+    """
+    Roll a random number between the specified interval.
+    """
+    try:
+        a=int(a)
+        b=int(b)
 
+        if b==0:
+            b=a
+            a=0
+        else:
+            if a>b:
+                a,b= b,a
+        nums=[i for i in range(a,b+1,1)]
 
+        await ctx.send(choice(nums))
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+    except ValueError:
         pass
-    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+    except:
         pass
 
+@bot.command()
+async def inv(ctx):
+    inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0)
+    await ctx.send(inv_link)
+
+
+#print Zer0
+@bot.command(name='Zero', aliases=['zer0'])
+async def zero(ctx):
+    """
+    Zer0
+    """
+    a='''
+		         ,----,                                    
+		       .'   .`|                  ,----..           
+		    .'   .'   ;                 /   /   \          
+		  ,---, '    .'        __  ,-. /   .     :         
+		  |   :     ./       ,' ,'/ /|.   /   ;.  \        
+		  ;   | .'  /  ,---. '  | |' .   ;   /  ` ;        
+		  `---' /  ;  /     \|  |   ,;   |  ; \ ; |        
+		    /  ;  /  /    /  '  :  / |   :  | ; | '        
+		   ;  /  /--.    ' / |  | '  .   |  ' ' ' :        
+		  /  /  / .`'   ;   /;  : |  '   ;  \; /  |        
+		./__;       '   |  / |  , ;   \   \  ',  /         
+		|   :     .'|   :    |---'     ;   :    /          
+		;   |  .'    \   \  /           \   \ .'           
+		`---'         `----'             `---`           
+                                                   
+'''
+
+    await ctx.send(f'```{a}```')
+
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
 
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
-bot.run(DISCORD_TOKEN)
+bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
 
 
 
