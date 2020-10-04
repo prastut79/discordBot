@@ -78,9 +78,9 @@ async def on_member_join(member):
 
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'🧑｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
+        await channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
     except:
-        memberr = await bot.fetch_user(483179796323631115)
+        memberr = await member.guild.owner
         await memberr.send(f'Couldn\'n change the total member count')
 
 
@@ -112,7 +112,7 @@ async def on_member_remove(member):
     #TOTAL MEMBERS COUNT
     try:
         channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'🧑｜𝗔𝗟𝗟-𝗠𝗘𝗠𝗕𝗘𝗥𝗦: {len(member.guild.members)}')
+        await channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
     except:
         memberr = await bot.fetch_user(483179796323631115)
         await memberr.send(f'Couldn\'n change the total member count')
@@ -495,7 +495,7 @@ async def inv(ctx):
     Create a Invitaion Link for the Server.
     """
     inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0, unique=False)
-    await ctx.send(inv_link)
+    await ctx.author.send(f'Here is the Invitation link to This server\n{inv_link}')
     
 
 
@@ -505,8 +505,8 @@ async def zer0(ctx):
     """
     Zeroooooooooo0000000000
     """
-    a='''
-		         ,----,                                    
+    
+	a='''        ,----,                                    
 		       .'   .`|                  ,----..           
 		    .'   .'   ;                 /   /   \          
 		  ,---, '    .'        __  ,-. /   .     :         
@@ -519,8 +519,7 @@ async def zer0(ctx):
 		./__;       '   |  / |  , ;   \   \  ',  /         
 		|   :     .'|   :    |---'     ;   :    /          
 		;   |  .'    \   \  /           \   \ .'           
-		`---'         `----'             `---`           
-                                                   
+		`---'         `----'             `---`                                   
         '''
 
     await ctx.send(f'```{a}```')
