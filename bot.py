@@ -25,8 +25,8 @@ HEX_COLORS=[
 
 
 #'''---------------------------START-------------------------------'''
-# SERVER_PREFIX=environ.get('BOT_PREFIX')
-SERVER_PREFIX='-' 
+SERVER_PREFIX=environ.get('BOT_PREFIX')
+# SERVER_PREFIX='-' 
 
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 
@@ -37,18 +37,15 @@ bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 async def on_ready():
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE"))
     print('Bot is Online. GTG')
-    # # Setting `Playing ` status
+
     # await bot.change_presence(activity=discord.Game(name="a game"))
-    # # Setting `Streaming ` status
     # await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
-    # # Setting `Listening ` status
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
-    # # Setting `Watching ` status
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
 #========================================================
+
+
 #Serve Join
-
-
 @bot.event#member.id
 async def on_member_join(member):
     #WELCOME MESSAGE------------------------------------------------------------
@@ -72,7 +69,7 @@ async def on_member_join(member):
         await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
-            gif_to_send=choice(reader)
+        gif_to_send=choice(reader)
         
         await member.send(gif_to_send)         #SEND GIFs
     except:
@@ -380,7 +377,7 @@ async def server_info(ctx):
                     ("Voice channels", len(ctx.guild.voice_channels), True),
                     
 
-                    ("\u200b",f"**🟢 {statuses[0]}｜🟠 {statuses[1]}｜🔴 {statuses[2]}｜⚪ {statuses[3]}**", False),
+                    ("\u200b",f"**🟢  {statuses[0]}｜🟠  {statuses[1]}｜🔴  {statuses[2]}｜⚪  {statuses[3]}**", False),
                     
 
                     # ("ID", f'{ctx.guild.id}', True),
@@ -540,8 +537,8 @@ async def on_command_error(ctx, error):
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
-# bot.run(DISCORD_TOKEN)
-bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
+bot.run(DISCORD_TOKEN)
+
 
 
 
