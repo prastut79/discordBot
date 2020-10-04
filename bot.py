@@ -26,7 +26,7 @@ HEX_COLORS=[
 
 #'''---------------------------START-------------------------------'''
 # SERVER_PREFIX=environ.get('BOT_PREFIX')
-SERVER_PREFIX='-'
+SERVER_PREFIX='-' 
 
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 
@@ -53,7 +53,7 @@ async def on_ready():
 async def on_member_join(member):
     #WELCOME MESSAGE------------------------------------------------------------
     embed=discord.Embed(color=choice(HEX_COLORS), 
-        description=f'\n\n{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
+                        description=f'\n\n{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
         )
     embed.set_thumbnail(url=f'{member.avatar_url}')
     embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
@@ -65,7 +65,7 @@ async def on_member_join(member):
     await channel.send(embed=embed)
 
     #create inv link
-    inv_link = await channel.create_invite(max_age=0, max_uses=0)
+    inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
     
     try:
         #send private message
@@ -223,17 +223,17 @@ async def addcom(ctx, *args):
             else:
                 command_channel = bot.get_channel(757846893375258659)
                 zero_bot_commands = bot.get_channel(757231675146108928)
-                # if len(args)>=2:
-                command_name=args[0].strip()
-                if command_name[0]==SERVER_PREFIX:
-                    await ctx.send(f':exclamation: Please donot use Server Prefix as a Custom Command Prefix')
-                else:
-                    action=(' '.join(args[1:])).strip()
-                    spaces= ' '*(18-(len(command_name)))
-                    await zero_bot_commands.send(f'` {command_name} `{spaces}   **{action}**')
-                    await command_channel.send(f'{command_name}{" "*5}{action}{" "*5}**AddedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
-                    
-                    await ctx.message.add_reaction('☑')
+                if len(args)>=2:
+                    command_name=args[0].strip()
+                    if command_name[0]==SERVER_PREFIX:
+                        await ctx.send(f':exclamation: Please do not use Server Prefix as a Custom Command Prefix')
+                    else:
+                        action=(' '.join(args[1:])).strip()
+                        spaces= ' '*(18-(len(command_name)))
+                        await zero_bot_commands.send(f'` {command_name} `{spaces}   **{action}**')
+                        await command_channel.send(f'{command_name}{" "*5}{action}{" "*5}**AddedBy:** {ctx.message.author.mention}  **On:** `{datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S")}`.')
+                        
+                        await ctx.message.add_reaction('☑')
         except IndexError:
             await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
 
@@ -472,48 +472,41 @@ async def choise(ctx, *args):
     Choose between different items.
     """
 
-    await ctx.send(f'{ctx.author.mention}\n> {choice(args)}')
+    await ctx.send(f'> {choice(args)}')
 
 #Roll Random Numbers
 @bot.command(name='RollNumber', aliases=['roll','rnd'])
-async def roll(ctx,a,b=0):
+async def roll(ctx,a=0,b=100):
     """
-    Roll a random number between the specified interval.
+    Roll a random number between the specified interval.(Deafult 0-100)
     """
     try:
         a=int(a)
         b=int(b)
 
-        if b==0:
-            b=a
-            a=0
-        else:
-            if a>b:
-                a,b= b,a
+        if a>b:
+            a,b= b,a
         nums=[i for i in range(a,b+1,1)]
 
-        await ctx.send(choice(nums))
-
-    except ValueError:
-        pass
+        await ctx.send(f'> {choice(nums)}')
     except:
         pass
 
-@bot.command(name="Invitaion",aliases=['cinv','invitationlink',])
+@bot.command(name="Invitaion",aliases=['cinv','invitationlink'])
 async def inv(ctx):
     """
     Create a Invitaion Link for the Server.
     """
-    inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0)
+    inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0, unique=False)
     await ctx.send(inv_link)
     
 
 
 #print Zer0
-@bot.command(name='Zero', aliases=['zer0'])
-async def zero(ctx):
+@bot.command(name='Zer00', aliases=['zer0'])
+async def zer0(ctx):
     """
-    Zer0
+    Zeroooooooooo0000000000
     """
     a='''
 		         ,----,                                    
@@ -531,24 +524,24 @@ async def zero(ctx):
 		;   |  .'    \   \  /           \   \ .'           
 		`---'         `----'             `---`           
                                                    
-'''
+        '''
 
     await ctx.send(f'```{a}```')
 
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
 
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
-bot.run(DISCORD_TOKEN)
-
+# bot.run(DISCORD_TOKEN)
+bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
 
 
 
