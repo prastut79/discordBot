@@ -43,28 +43,40 @@ async def on_ready():
 async def aplaying(ctx,*name):
     if ctx.author.id == BOT_OWNER_ID:
         name=' '.join(list(name))
-        await bot.change_presence(activity= discord.Game(name= name))
+        await bot.change_presence(
+                status=discord.Status.idle, 
+                activity= discord.Game(name= name)
+        )
         await ctx.message.add_reaction('☑')
 
 @bot.command()
 async def astreaming(ctx, url, *name):
     if ctx.author.id == BOT_OWNER_ID:
         name = ' '.join(list(name))
-        await bot.change_presence(activity=discord.Streaming(name=name,  url=url))
+        await bot.change_presence(
+                status=discord.Status.idle, 
+                activity=discord.Streaming(name=name,  url=url)
+        )
         await ctx.message.add_reaction('☑')
 
 @bot.command()
 async def awatching(ctx,*name):
     if ctx.author.id == BOT_OWNER_ID:
         name= ' '.join(list(name))
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
+        await bot.change_presence(  
+                status=discord.Status.idle, 
+                activity=discord.Activity(type=discord.ActivityType.watching, name=name)
+        )
         await ctx.message.add_reaction('☑')
 
 @bot.command()
 async def alistening(ctx,*name):
     if ctx.author.id == BOT_OWNER_ID:
         name=' '.join(list(name))
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=name))
+        await bot.change_presence(
+                status=discord.Status.idle, 
+                activity=discord.Activity(type=discord.ActivityType.listening, name=name)
+        )
         await ctx.message.add_reaction('☑')
 
 #========================================================
@@ -513,9 +525,10 @@ async def choise(ctx, *args):
 
     await ctx.send(f'> {random.choice(args)}')
 
+
 #Roll Random Numbers
 @bot.command(name='RollNumber', aliases=['roll','rnd'])
-async def roll(ctx,a=0,b=100):
+async def roll(ctx,a,b=0):
     """
     Roll a random number between the specified interval.(Deafult 0-100)
     """
@@ -546,8 +559,6 @@ async def inv(ctx):
 
     
     
-    
-
 
 #print Zer0
 @bot.command(name='Zer00', aliases=['zer0'])
@@ -575,6 +586,7 @@ async def zer0(ctx):
 
     await ctx.send(f'```{a}```')
 
+#Error Handling
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
