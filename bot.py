@@ -1,21 +1,20 @@
 #https://discordpy.readthedocs.io/en/latest/logging.html
-#https://github.com/netsos798/pybot/blob/master/bot.py
-#https://dashboard.heroku.com/apps/py-bot-discord-798/logs
-#git add . , git commit -m "das", git push
 
 from os import environ
 from datetime import datetime 
 from typing import Optional
 import csv
-
+import random
 
 import discord
 from discord.ext import commands
-from random import choice 
 from discord import Embed, Member
 from discord.ext.commands import command                    
 
 import asyncio
+
+BOT_OWNER_ID = 483179796323631115
+BOT_ID = 756816513037762581
 
 HEX_COLORS=[
     0x4B4CAD, 0xA2D7CC, 0x74AD4B, 0x000000, 0x52fff1, 0xFF51EB, 0xC481A7, 0xffadad, 0xe29578, 0xBD93BD,
@@ -35,13 +34,39 @@ bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 #bot Start
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE"))
+    await bot.change_presence(
+            status=discord.Status.idle, 
+            activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE"))
     print('Bot is Online. GTG')
 
-    # await bot.change_presence(activity=discord.Game(name="a game"))
-    # await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
-    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
-    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
+@bot.command()
+async def aplaying(ctx,*name):
+    if ctx.author.id == BOT_OWNER_ID:
+        name=' '.join(list(name))
+        await bot.change_presence(activity= discord.Game(name= name))
+        await ctx.message.add_reaction('☑')
+
+@bot.command()
+async def astreaming(ctx, url, *name):
+    if ctx.author.id == BOT_OWNER_ID:
+        name = ' '.join(list(name))
+        await bot.change_presence(activity=discord.Streaming(name=name,  url=url))
+        await ctx.message.add_reaction('☑')
+
+@bot.command()
+async def awatching(ctx,*name):
+    if ctx.author.id == BOT_OWNER_ID:
+        name= ' '.join(list(name))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=name))
+        await ctx.message.add_reaction('☑')
+
+@bot.command()
+async def alistening(ctx,*name):
+    if ctx.author.id == BOT_OWNER_ID:
+        name=' '.join(list(name))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=name))
+        await ctx.message.add_reaction('☑')
+
 #========================================================
 
 
@@ -49,7 +74,7 @@ async def on_ready():
 @bot.event#member.id
 async def on_member_join(member):
     #WELCOME MESSAGE------------------------------------------------------------
-    embed=discord.Embed(color=choice(HEX_COLORS), 
+    embed=discord.Embed(color=random.choice(HEX_COLORS), 
                         description=f'\n\n{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
         )
     embed.set_thumbnail(url=f'{member.avatar_url}')
@@ -69,7 +94,7 @@ async def on_member_join(member):
         await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
-        gif_to_send=choice(reader)
+        gif_to_send=random.choice(reader)
         
         await member.send(gif_to_send)         #SEND GIFs
     except:
@@ -85,6 +110,7 @@ async def on_member_join(member):
 
 
     #-----------------------------------------------------------#WELCOME MESSAGE
+
     #GIVE MEMBER ROLE ON JOIN
     role_member = discord.utils.get(member.guild.roles, name='Member')
     await member.add_roles(role_member)
@@ -97,7 +123,7 @@ async def on_member_join(member):
 
 @bot.event
 async def on_member_remove(member):
-    embed=discord.Embed(color=choice(HEX_COLORS), description=f'**{member.name}** has left the server.\nGoodBye:wave:')
+    embed=discord.Embed(color=random.choice(HEX_COLORS), description=f'**{member.name}** has left the server.\nGoodBye:wave:')
     embed.set_thumbnail(url=f'{member.avatar_url}')
     embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
     embed.set_footer(text=f'{member.guild}', icon_url=f'{member.guild.icon_url}')
@@ -165,7 +191,24 @@ async def _bot_ping(ctx):
     if ctx.author.bot == False:
         await ctx.send(f'Ping: {int(round(bot.latency*1000,1))}ms')
 #========================================================
- 
+
+
+ #DM MESSAGE
+@bot.command()
+async def dm(ctx,user:discord.Member=None, *message):
+
+    if ctx.author.id == BOT_OWNER_ID:
+        message= ' '.join(list(message))
+        await user.send(message)
+        await ctx.message.add_reaction('☑')
+
+@dm.error
+async def dm_error(ctx, error):
+    if isinstance(error, commands.errors.BadArgument):
+        await ctx.send(f'{ctx.author.mention}\nMember not Found')
+
+ #==============
+
 
 
 #Clear Message Command
@@ -187,10 +230,10 @@ async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         pass
  #========================================================   
+
+
+
 #add COmmand command
-
-
-
 @bot.command(name='AddCommand', aliases=['addcom'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 
@@ -384,7 +427,6 @@ async def server_info(ctx):
                     # ("Members", len(ctx.guild.members), True),
                     # ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),
                     # ("Invites", len(await ctx.guild.invites()), True),
-                    
                 ]
 
         for name, value, inline in fields:
@@ -469,7 +511,7 @@ async def choise(ctx, *args):
     Choose between different items.
     """
 
-    await ctx.send(f'> {choice(args)}')
+    await ctx.send(f'> {random.choice(args)}')
 
 #Roll Random Numbers
 @bot.command(name='RollNumber', aliases=['roll','rnd'])
@@ -485,17 +527,25 @@ async def roll(ctx,a=0,b=100):
             a,b= b,a
         nums=[i for i in range(a,b+1,1)]
 
-        await ctx.send(f'> {choice(nums)}')
+        await ctx.send(f'> {random.choice(nums)}')
     except:
         pass
 
+
+#create inv link
 @bot.command(name="Invitaion",aliases=['cinv','invitationlink'])
 async def inv(ctx):
     """
     Create a Invitaion Link for the Server.
     """
-    inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0, unique=False)
+    channel = ctx.guild.get_channel(756417893314461766)
+    inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
+
     await ctx.author.send(f'Here is the Invitation link to This server\n{inv_link}')
+    
+
+    
+    
     
 
 
@@ -539,78 +589,3 @@ DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
 bot.run(DISCORD_TOKEN)
 
-
-
-
-
-    
-#JSON JOINN AND LEAVE  
-'''
-    if str(member.guild)=='Netsos':
-        #OPENING JSON FILE
-        with open('discord_member_info.json','r') as f:
-            data=json.load(f)
-
-        #when leaving
-        for i in data['members_info']:
-            if i['user_id']==member.id:
-                i['leave_status']=True
-                i['leave_date'].append(str(datetime.utcnow())+' UTC')
-                i['leave_status']=True
-                i['leave_count']+=1
-                break
-
-        #WRITING TO JSON FILE
-        with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)   
-    
-     #OPENING JSON FILE
-    with open('discord_member_info.json','r') as f:
-        data=json.load(f)
-
-    if str(member.guild)=='Netsos':
-        #when joining
-        new_user=True
-        for i in data['members_info']:
-            if i['user_id']==member.id:
-                i['name'].append(member.name+'#'+member.discriminator)
-                i["member_count"].append(len(list(member.guild.members)))
-                i['joined_status']=True
-                i['joined_date'].append(str(datetime.utcnow())+' UTC')
-                i['join_count']+=1
-                i["nicknames"].append(member.nick)
-                i['leave_status']=False
-
-                new_user=False
-                break
-            
-
-        if new_user:
-            dic={
-                    "user_id": member.id,
-                    "name": [member.name+'#'+member.discriminator],
-                    "member_count": [len(list(member.guild.members))],
-                    "joined_status": True,
-                    "joined_date": [str(datetime.utcnow())+' UTC'],
-                    "join_count": 1,
-                    "leave_status": False,
-                    "leave_date": [],
-                    "leave_count": 0,
-                    "roles": [],
-                    "nicknames": [member.nick]
-                }
-            data['members_info'].append(dic)
-
-        
-        #WRITING TO JSON FILE
-        with open('discord_member_info.json','w') as g:
-            json.dump(data,g, indent=4)
-            '''
-
-    #'Member': 756428207200403477,
-    # 'OP': 756534460173779044,
-    # '🛡️│Bots': 756429809759813683,
-    # 'GUYZ': 756487678668701747,
-    # 'MOD': 756410200172396595,
-    # 'ADMIN': 756398801874321408,
-    # '乙乇尺回': 756435470623309836
