@@ -1,15 +1,17 @@
 #https://discordpy.readthedocs.io/en/latest/logging.html
+#whitespace = \u200b
 
 from os import environ
 from datetime import datetime 
 from typing import Optional
 import csv
 import random
+from time import time
 
 import discord
 from discord.ext import commands
 from discord import Embed, Member
-from discord.ext.commands import command                    
+from discord.ext.commands import command, cooldown , BucketType                 
 
 import asyncio
 
@@ -24,8 +26,8 @@ HEX_COLORS=[
 
 
 #'''---------------------------START-------------------------------'''
-SERVER_PREFIX=environ.get('BOT_PREFIX')
-# SERVER_PREFIX='-' 
+# SERVER_PREFIX=environ.get('BOT_PREFIX')
+SERVER_PREFIX='-' 
 
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 
@@ -127,12 +129,10 @@ async def on_member_join(member):
     role_member = discord.utils.get(member.guild.roles, name='Member')
     await member.add_roles(role_member)
 
-
 #========================================================
+
+
 #Server Leave
-
-
-
 @bot.event
 async def on_member_remove(member):
     embed=discord.Embed(color=random.choice(HEX_COLORS), description=f'**{member.name}** has left the server.\nGoodBye:wave:')
@@ -153,13 +153,12 @@ async def on_member_remove(member):
         await channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
     except:
         memberr = await bot.fetch_user(483179796323631115)
-        await memberr.send(f'Couldn\'n change the total member count')
-    
-    
-    
-#========================================================
-#ON MESSAGE
+        await memberr.send(f'Couldn\'n change the total member count')  
 
+#========================================================
+
+
+#ON MESSAGE
 @bot.event
 async def on_message(message):
     if message.author.bot==False:
@@ -189,19 +188,34 @@ async def on_message(message):
         
         await bot.process_commands(message)
 
-
-
-
 #========================================================
+
+
 #Ping Command
 @bot.command(name='BotPing', aliases=['ping'])
+@commands.cooldown(1, 5, BucketType.guild)
 async def _bot_ping(ctx):
     """
     Ping the Bot
     """
 
     if ctx.author.bot == False:
-        await ctx.send(f'Ping: {int(round(bot.latency*1000,1))}ms')
+        
+
+        start= time()
+        message = await ctx.send('**Pinging...**')
+        end= time()
+
+        description=f'⌛ **Latency:** {int(round(bot.latency*1000,1))}ms \n\u200b\n⏰ **Response Time:** {int((end-start)*1000)}ms'
+
+        embed= discord.Embed(color=random.choice(HEX_COLORS), description=description)
+
+        await message.edit(content='',embed=embed)
+
+@_bot_ping.error
+async def ping_error(ctx, error):
+    await ctx.send( f'**There was an error while Pinging the bot.**')
+
 #========================================================
 
 
@@ -218,14 +232,14 @@ async def dm(ctx,user:discord.Member=None, *message):
 async def dm_error(ctx, error):
     if isinstance(error, commands.errors.BadArgument):
         await ctx.send(f'{ctx.author.mention}\nMember not Found')
-
- #==============
-
+ 
+ #========================================================   
 
 
 #Clear Message Command
 @bot.command(name='ClearMessages',  aliases=['clear','clearmsg','cls'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
+
 async def clear(ctx, amount=0):
     """
     Delete Messages
@@ -241,8 +255,8 @@ async def clear(ctx, amount=0):
 async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         pass
+ 
  #========================================================   
-
 
 
 #add COmmand command
@@ -295,13 +309,14 @@ async def addcom_error(ctx, error):
         pass
     elif isinstance(error, commands.errors):
         await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
+ 
  #========================================================  
+
+
 #Delete COmmand command
-
-
 @bot.command(name='DeleteCustomCommand', aliases=['delcom','deletecommand'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
-
+@commands.cooldown(1,20,BucketType.member)
 async def delcom(ctx,*, command):
     """
     Delete a Command
@@ -354,12 +369,13 @@ async def delcom_error(ctx, error):
     elif isinstance(error, commands.errors):
         await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
+
 #========================================================  
+
+
 #USER INFO
-
-
-
 @bot.command(name="UserInformation", aliases=["userinfo", "ui"])
+@commands.cooldown(5,60*60*24,BucketType.member)
 async def user_info(ctx, target: Optional[Member]):
     """
     All the Information about the User
@@ -395,12 +411,13 @@ async def user_info(ctx, target: Optional[Member]):
             embed.add_field(name=name, value=value, inline=inline)
 
         await ctx.send(embed=embed)
+ 
  #========================================================   
+
+
 #SERVER INFO
-
-
-
 @bot.command(name="ServerInformation", aliases=['serverinfo', 'si'])
+@commands.cooldown(5,60*60*24,BucketType.guild)
 async def server_info(ctx):
     """
     All the Information about the server.
@@ -445,31 +462,9 @@ async def server_info(ctx):
             embed.add_field(name=name, value=value, inline=inline)
 
         await ctx.send(embed=embed)
+ 
  #========================================================   
 
-@bot.command(name='RepeatUser', aliases=['say','repeat'])
-async def say(ctx, *args):
-    """
-    Repeat The User.
-    """
-    
-    if ctx.author.bot == False:
-
-        if args[0][0] == (f'{SERVER_PREFIX}'):
-            
-            try:
-                count=args[0][1]
-                for i in range(int(count)):
-                    send=' '.join(list(args)[1:])
-                    await ctx.send(send)
-                    await asyncio.sleep(0.5)
-            except:
-                send=' '.join(list(args))
-                await ctx.send(send)
-        else:
-            send=' '.join(list(args))
-            await ctx.send(send)
- #========================================================
 
 #FORMAT COMMANDS
 @bot.command(name='FormatCommand', aliases=['forcom','formatcommands'])
@@ -499,35 +494,53 @@ async def formatcommands(ctx):
             await asyncio.sleep(1)
         await ctx.message.add_reaction('☑')
         
+ 
+ #========================================================  
 
 
-@bot.command(name='LogOutBot', aliases=['logout','close'])
-@commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
-async def LogOut(ctx):
+@bot.command(name='RepeatUser', aliases=['say','repeat'])
+# @commands.cooldown(1,60,BucketType.member)
+async def say(ctx, *args):
     """
-    Closes The Bot
+    Repeat The User.
     """
+    
     if ctx.author.bot == False:
-        memberr = await bot.fetch_user(483179796323631115)
-        
-        await ctx.message.add_reaction('☑')
-        await memberr.send(f'Logged Out by: **{ctx.author.id}** || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
-        await ctx.send(f'Bye Bye')
-        await bot.close()
+
+        if args[0][0] == (f'{SERVER_PREFIX}'):
+            
+            try:
+                count=args[0][1]
+                for i in range(int(count)):
+                    send=' '.join(list(args)[1:])
+                    await ctx.send(send)
+                    await asyncio.sleep(0.5)
+            except:
+                send=' '.join(list(args))
+                await ctx.send(send)
+        else:
+            send=' '.join(list(args))
+            await ctx.send(send)
+ 
+ #========================================================
 
 
 #CHoose between objects
 @bot.command(name='Choice', aliases=['choose','chs'])
+# @commands.cooldown(1,60,BucketType.member)
 async def choise(ctx, *args):
     """
     Choose between different items.
     """
 
     await ctx.send(f'> {random.choice(args)}')
+ 
+ #========================================================  
 
 
 #Roll Random Numbers
 @bot.command(name='RollNumber', aliases=['roll','rnd'])
+# @commands.cooldown(1,60,BucketType.member)
 async def roll(ctx,a,b=0):
     """
     Roll a random number between the specified interval.(Deafult 0-100)
@@ -543,10 +556,13 @@ async def roll(ctx,a,b=0):
         await ctx.send(f'> {random.choice(nums)}')
     except:
         pass
+ 
+ #========================================================  
 
 
 #create inv link
 @bot.command(name="Invitaion",aliases=['cinv','invitationlink'])
+@commands.cooldown(1,60*10,BucketType.member)
 async def inv(ctx):
     """
     Create a Invitaion Link for the Server.
@@ -555,13 +571,13 @@ async def inv(ctx):
     inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
 
     await ctx.author.send(f'Here is the Invitation link to This server\n{inv_link}')
-    
+ 
+ #========================================================      
 
     
-    
-
 #print Zer0
 @bot.command(name='Zer00', aliases=['zer0'])
+@commands.cooldown(1,60*60*24*7,BucketType.user)
 async def zer0(ctx):
     """
     Zeroooooooooo0000000000
@@ -585,16 +601,38 @@ async def zer0(ctx):
     """
 
     await ctx.send(f'```{a}```')
+ 
+ #========================================================  
 
-#Error Handling
+
+@bot.command(name='LogOutBot', aliases=['logout','close'])
+@commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
+async def LogOut(ctx):
+    """
+    Closes The Bot
+    """
+    if ctx.author.bot == False:
+        memberr = await bot.fetch_user(483179796323631115)
+        
+        await ctx.message.add_reaction('☑')
+        await memberr.send(f'Logged Out by: **{ctx.author.id}** || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
+        await ctx.send(f'Bye Bye')
+        await bot.close()
+ 
+ #========================================================  
+
+
+# Error Handling
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         pass
-    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
         pass
-    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
         pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
 
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
