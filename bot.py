@@ -185,7 +185,6 @@ async def on_message(message):
             except IndexError:
                 await i.delete()
 
-        
         await bot.process_commands(message)
 
 #========================================================
@@ -198,23 +197,24 @@ async def _bot_ping(ctx):
     """
     Ping the Bot
     """
-
     if ctx.author.bot == False:
-        
-
         start= time()
         message = await ctx.send('**Pinging...**')
         end= time()
 
         description=f'⌛ **Latency:** {int(round(bot.latency*1000,1))}ms \n\u200b\n⏰ **Response Time:** {int((end-start)*1000)}ms'
 
-        embed= discord.Embed(color=random.choice(HEX_COLORS), description=description)
+        embed= discord.Embed(
+                color=random.choice(HEX_COLORS), 
+                description=description
+            )
 
         await message.edit(content='',embed=embed)
 
 @_bot_ping.error
 async def ping_error(ctx, error):
-    await ctx.send( f'**There was an error while Pinging the bot.**')
+    if not isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.send( f'**There was an error while Pinging the bot.**')
 
 #========================================================
 
@@ -231,7 +231,7 @@ async def dm(ctx,user:discord.Member=None, *message):
 @dm.error
 async def dm_error(ctx, error):
     if isinstance(error, commands.errors.BadArgument):
-        await ctx.send(f'{ctx.author.mention}\nMember not Found')
+        await ctx.send(f'{ctx.author.mention}\nMember not Found.')
  
  #========================================================   
 
@@ -251,10 +251,6 @@ async def clear(ctx, amount=0):
         else:
             await ctx.channel.purge(limit=100)
 
-@clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        pass
  
  #========================================================   
 
@@ -292,7 +288,7 @@ async def addcom(ctx, *args):
                 if len(args)>=2:
                     command_name=args[0].strip()
                     if command_name[0]==SERVER_PREFIX:
-                        await ctx.send(f':exclamation: Please do not use Server Prefix as a Custom Command Prefix')
+                        await ctx.send(f':exclamation: Please do not use Server Prefix as a Custom Command Prefix.')
                     else:
                         action=(' '.join(args[1:])).strip()
                         spaces= ' '*(18-(len(command_name)))
@@ -303,13 +299,6 @@ async def addcom(ctx, *args):
         except IndexError:
             await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
 
-@addcom.error
-async def addcom_error(ctx, error):
-    if isinstance(error, commands.errors.MissingAnyRole):
-        pass
-    elif isinstance(error, commands.errors):
-        await ctx.send(f':exclamation: The CORRECT Format for Adding a Command is:\n**```  {SERVER_PREFIX}addcom [command-name] [action]  ```**')
- 
  #========================================================  
 
 
@@ -355,19 +344,11 @@ async def delcom(ctx,*, command):
                         break
 
             else:
-                await ctx.send(f'{ctx.message.author.mention}\n:x: Command not Found')
+                await ctx.send(f'{ctx.message.author.mention}\n:x: Command not Found.')
 
 
         except IndexError:
             await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
-
-
-@delcom.error
-async def delcom_error(ctx, error):
-    if isinstance(error, commands.errors.MissingAnyRole):
-        pass
-    elif isinstance(error, commands.errors):
-        await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
 
 #========================================================  
@@ -398,7 +379,6 @@ async def user_info(ctx, target: Optional[Member]):
                     ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
                     ("Joined at", target.joined_at.strftime("%b %d, %Y "), False)
                     
-
                     # ("Created at", target.created_at.strftime("%b %d, %Y "), True),
                     # ("Boosted", bool(target.premium_since), True)
                     # # ("ID", target.id, True)
@@ -577,32 +557,31 @@ async def inv(ctx):
     
 #print Zer0
 @bot.command(name='Zer00', aliases=['zer0'])
-@commands.cooldown(1,60*60*24*7,BucketType.user)
 async def zer0(ctx):
     """
     Zeroooooooooo0000000000
     """
-    
-    a="""
-                 ,----,                                    
-		       .'   .`|                  ,----..           
-		    .'   .'   ;                 /   /   \          
-		  ,---, '    .'        __  ,-. /   .     :         
-		  |   :     ./       ,' ,'/ /|.   /   ;.  \        
-		  ;   | .'  /  ,---. '  | |' .   ;   /  ` ;        
-		  `---' /  ;  /     \|  |   ,;   |  ; \ ; |        
-		    /  ;  /  /    /  '  :  / |   :  | ; | '        
-		   ;  /  /--.    ' / |  | '  .   |  ' ' ' :        
-		  /  /  / .`'   ;   /;  : |  '   ;  \; /  |        
-		./__;       '   |  / |  , ;   \   \  ',  /         
-		|   :     .'|   :    |---'     ;   :    /          
-		;   |  .'    \   \  /           \   \ .'           
-		`---'         `----'             `---`                                   
-    """
+    if ctx.author.id == BOT_OWNER_ID:
+        a="""
+                     ,----,                                    
+	    	       .'   .`|                  ,----..           
+	    	    .'   .'   ;                 /   /   \          
+	    	  ,---, '    .'        __  ,-. /   .     :         
+	    	  |   :     ./       ,' ,'/ /|.   /   ;.  \        
+	    	  ;   | .'  /  ,---. '  | |' .   ;   /  ` ;        
+	    	  `---' /  ;  /     \|  |   ,;   |  ; \ ; |        
+	    	    /  ;  /  /    /  '  :  / |   :  | ; | '        
+	    	   ;  /  /--.    ' / |  | '  .   |  ' ' ' :        
+		      /  /  / .`'   ;   /;  : |  '   ;  \; /  |        
+		    ./__;       '   |  / |  , ;   \   \  ',  /         
+		    |   :     .'|   :    |---'     ;   :    /          
+		    ;   |  .'    \   \  /           \   \ .'           
+		    `---'         `----'             `---`                                   
+        """
 
-    await ctx.send(f'```{a}```')
+        await ctx.send(f'```{a}```')
  
- #========================================================  
+ #========================================================
 
 
 @bot.command(name='LogOutBot', aliases=['logout','close'])
@@ -633,9 +612,12 @@ async def on_command_error(ctx, error):
         pass
     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
         await ctx.message.add_reaction('⏳')
-
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
 bot.run(DISCORD_TOKEN)
 
+#========================================================  
+#========================================================  
