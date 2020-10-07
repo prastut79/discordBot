@@ -38,7 +38,8 @@ bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 async def on_ready():
     await bot.change_presence(
             status=discord.Status.idle, 
-            activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE"))
+            activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE")
+    )
     print('Bot is Online. GTG')
 
 @bot.command()
@@ -105,7 +106,7 @@ async def on_member_join(member):
     
     try:
         #send private message
-        await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
+        welcomemsg= await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
         with open('welcom_gifs.txt','r') as f:
             reader=f.readlines()
         gif_to_send=random.choice(reader)
@@ -129,6 +130,9 @@ async def on_member_join(member):
     role_member = discord.utils.get(member.guild.roles, name='Member')
     await member.add_roles(role_member)
 
+    #welcome Emoji
+    welcomeemoji = discord.utils.get(member.guild.emojis, name='welcome')
+    welcomemsg.add_reaction(welcomeemoji)
 #========================================================
 
 
@@ -554,7 +558,81 @@ async def inv(ctx):
  
  #========================================================      
 
-    
+#List Server Emojis
+@bot.command()
+@commands.cooldown(1,60*60, BucketType.member)
+async def listemoji(ctx, extra='list'):
+    """
+    List all the custom emoji of the server
+    """
+
+    if extra=='list':
+        non_animated_list= [f'<:{i.name}:{i.id}>' for i in ctx.guild.emojis if not i.animated]
+        animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
+        print(animated_list)
+
+        if len(non_animated_list)==0 and len(animated_list)==0:
+            await ctx.send(f'{ctx.author.mention}\n:exclamation: No custom emojis has been added.')
+        else:
+            #NON ANIMATED EMOJIS
+            
+            if len(non_animated_list)>0:
+
+                k=0
+                non_animated=''
+                for i in range(int(len(non_animated_list)/5)+1):
+                    non_animated+= ' '.join(non_animated_list[k:k+5])
+                    k+=5
+                non_animated= non_animated.strip('\n')
+
+                await ctx.send('**Custom Emojis**')
+                await ctx.send(non_animated)
+
+            
+            #ANIMATED EMOJIS
+            if len(animated_list)>0:
+
+                k=0
+                animated=''
+                for i in range(int(len(animated_list)/5)+1):
+                    animated+= ' '.join(animated_list[k:k+5])
+                    k+=5
+                animated= animated.strip('\n')
+                
+                await ctx.send('**Custom Animated Emojis**')
+                await ctx.send(animated)
+      
+# ========================================================
+
+
+#Add Reaction to a Message
+@bot.command(name='ReactWithEmoji', aliases=['reactemoji', 'remj'])
+@commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
+async def reactemoji(ctx,  emoji, message: discord.Message= None):
+
+    if not isinstance(message, discord.Message):
+        message = ctx.message
+
+
+    await message.add_reaction(emoji)
+
+# ========================================================
+
+
+#mass React
+@bot.command(name='MassReactWithEmoji', aliases=['massreactemoji', 'mremj'])
+@commands.has_any_role('乙乇尺回','ADMIN')
+async def massreactemoji(ctx, channel, message, *args):
+    channel = bot.get_channel(int(channel))
+    message = await channel.fetch_message(int(message))
+
+    for i in args:
+        await message.add_reaction(i)
+
+    await ctx.message.add_reaction('☑')
+# ========================================================
+
+
 #print Zer0
 @bot.command(name='Zer00', aliases=['zer0'])
 async def zer0(ctx):
@@ -583,7 +661,7 @@ async def zer0(ctx):
  
  #========================================================
 
-
+#Logout the bot
 @bot.command(name='LogOutBot', aliases=['logout','close'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 async def LogOut(ctx):
