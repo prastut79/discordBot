@@ -569,7 +569,6 @@ async def listemoji(ctx, extra='list'):
     if extra=='list':
         non_animated_list= [f'<:{i.name}:{i.id}>' for i in ctx.guild.emojis if not i.animated]
         animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
-        print(animated_list)
 
         if len(non_animated_list)==0 and len(animated_list)==0:
             await ctx.send(f'{ctx.author.mention}\n:exclamation: No custom emojis has been added.')
@@ -581,7 +580,7 @@ async def listemoji(ctx, extra='list'):
                 k=0
                 non_animated=''
                 for i in range(int(len(non_animated_list)/5)+1):
-                    non_animated+= ' '.join(non_animated_list[k:k+5])
+                    non_animated+= ' '.join(non_animated_list[k:k+5])+'\n'
                     k+=5
                 non_animated= non_animated.strip('\n')
 
@@ -595,7 +594,7 @@ async def listemoji(ctx, extra='list'):
                 k=0
                 animated=''
                 for i in range(int(len(animated_list)/5)+1):
-                    animated+= ' '.join(animated_list[k:k+5])
+                    animated+= ' '.join(animated_list[k:k+5])+'n'
                     k+=5
                 animated= animated.strip('\n')
                 
