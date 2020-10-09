@@ -773,7 +773,7 @@ async def LogOut(ctx):
  #========================================================  
 
 
-Error Handling
+##Error Handling
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
