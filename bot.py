@@ -645,8 +645,6 @@ async def sendmail(ctx):
             email = environ.get('GMAIL_EMAIL')
             password = environ.get('KHAI_K_HO')
 
-
-
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel
 
@@ -674,10 +672,6 @@ async def sendmail(ctx):
                 await temp.delete()
                 content = temp.content
 
- 
-        
-                
-                
                 #confirmation message
                 embed = Embed(
                     title='Mail Log',
@@ -695,12 +689,10 @@ async def sendmail(ctx):
                     return user == ctx.author and (str(reaction.emoji) == '☑' or str(reaction.emoji) == '❌')
 
                 #confirm mail send
-
                 reaction, user = await bot.wait_for('reaction_add', check=check_emj, timeout=300)
-
                 await embed.delete()
-
                 reaction = str(reaction)
+
                 if reaction == '☑':
 
                     # attempt login
@@ -712,10 +704,8 @@ async def sendmail(ctx):
                         return
 
                     await status.edit(content='Attempting to Send Mail...')
-
                     msg= f'Subject: {subject}\n\n{content}'
                     smtp.sendmail(email, target, msg)
-                    
                     await status.edit(content=f'{ctx.author.mention}\nMail Sent Succssfully!')
 
                 elif reaction == '❌':
@@ -726,10 +716,8 @@ async def sendmail(ctx):
             except asyncio.TimeoutError:
                 await temp.edit(content='Request Timedout')
 
-
             except smtplib.SMTPRecipientsRefused:
                 await status.edit(content='Invalid Email Address')
-
 
             except:
                 await ctx.send('Errorrrrr')
@@ -785,23 +773,23 @@ async def LogOut(ctx):
  #========================================================  
 
 
-# Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+Error Handling
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
-# DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
-bot.run('NzU2ODE2NTEzMDM3NzYyNTgx.X2XWTQ.h-3pujN5KbKbqnDsAhtVq7RRHKQ')
-# bot.run(DISCORD_TOKEN)
+DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
+
+bot.run(DISCORD_TOKEN)
 
 #========================================================  
 #========================================================  
