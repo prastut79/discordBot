@@ -1,5 +1,5 @@
 #https://discordpy.readthedocs.io/en/latest/logging.html
-#whitespace = \u200b
+#whitespace = \u200b 
 
 from os import environ
 from datetime import datetime 
@@ -26,7 +26,7 @@ HEX_COLORS=[
 ]
 
 
-#'''---------------------------START-------------------------------'''
+#'''---------------------------START--------------------------------'''
 # SERVER_PREFIX=environ.get('BOT_PREFIX')
 SERVER_PREFIX='-' 
 
