@@ -22,16 +22,16 @@ BOT_ID = 756816513037762581
 HEX_COLORS=[
     0x4B4CAD, 0xA2D7CC, 0x74AD4B, 0x000000, 0x52fff1, 0xFF51EB, 0xC481A7, 0xffadad, 0xe29578, 0xBD93BD,
     0x22223b, 0x9DBBAE, 0x188FA7, 0x8C5F66, 0xADBCA5, 0xE8B9AB, 0xCB769E, 0x72B01D, 0xF7717D, 0x925E78,
-    0x7F2982, 0x16001E, 0x610345, 0x044B7F, 0xF05365, 0xA1CDF1, 0xC3A197, 0xDBE4EE, 0xdeaaff, 0x00296b
+    0x7F2982, 0x16001E, 0x610345, 0x044B7F, 0xF05365, 0xA1CDF1, 0xC3A197, 0xDBE4EE, 0xdeaaff, 0x00296b,
+    0x000000, 0xffffff
 ]
 
 
 #'''---------------------------START--------------------------------'''
-# SERVER_PREFIX=environ.get('BOT_PREFIX')
-SERVER_PREFIX='-' 
+SERVER_PREFIX=environ.get('BOT_PREFIX')
 
 bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
-bot.remove_command('help')
+# bot.remove_command('help')
 
 
 #bot Start
@@ -58,8 +58,8 @@ async def astreaming(ctx, url, *name):
     if ctx.author.id == BOT_OWNER_ID:
         name = ' '.join(list(name))
         await bot.change_presence(
-                status=discord.Status.idle, 
-                activity=discord.Streaming(name=name,  url=url)
+                status=discord.Status.idle,
+                activity=discord.Streaming(name= name,  url=url)
         )
         await ctx.message.add_reaction('☑')
 
@@ -634,7 +634,7 @@ async def massreactemoji(ctx, channel, message, *args):
 
 
 #send mail
-@bot.command()
+@bot.command(name='MailSend', aliases=['sendmail','smtp'])
 async def sendmail(ctx):
     if ctx.author.id == BOT_OWNER_ID:
 
@@ -722,10 +722,82 @@ async def sendmail(ctx):
             except:
                 await ctx.send('Errorrrrr')
 
-            
 
 
+#Bot Announce
+@bot.command()
+async def announce(ctx, channel:discord.TextChannel):
+    if ctx.author.id == BOT_OWNER_ID:
+        try:
 
+
+            await ctx.send('What do you want to announce?')
+            content=  await bot.wait_for('message', timeout=300)
+
+            await channel.send(content.content)
+
+
+        except asyncio.TimeoutError:
+            pass
+
+
+#Copy Message And Send
+@bot.command()
+async def copypaste(ctx, channel: discord.TextChannel, message: discord.Message):
+    if ctx.author.id == BOT_OWNER_ID:
+        await channel.send(content=message.content, embed=message.embeds[0])
+
+#create embed
+@bot.command()
+async def embed(ctx, *content):
+    content= ' '.join(content)
+
+    def check(m):
+        return None if m.lower()=='no' else m
+
+    await ctx.send('Any Title?')
+    title= (await bot.wait_for('message',timeout=100)).content
+    await asyncio.sleep(1)
+
+    await ctx.send('Any Description?')
+    description= (await bot.wait_for('message',timeout=100)).content
+    await asyncio.sleep(1)
+
+    embed= Embed(
+        title=check(title), 
+        description=check(description),
+        color= random.choice(HEX_COLORS)
+    )
+
+    a=True
+    def fort(m):
+        return False if m.lower()=='false' else True
+        
+    while a==True:
+        await ctx.send('Any Fields?')
+        field= await bot.wait_for('message',timeout=100)
+        field=field.content
+
+        if field.lower()=='no':
+            break
+        
+        await asyncio.sleep(1)
+
+        name= (' '.join(field.split('--')[0:1])).strip()
+        value= (' '.join(field.split('--')[1:2])).strip()
+        inline= fort(field.split('--')[-1].strip())
+
+        embed.add_field(name=name, 
+                        value= value, 
+                        inline= inline
+        )
+
+        
+        print(f'{name}\n{value}\n{inline}')
+    await ctx.send(content= content, embed=embed)
+
+
+    
 
 #print Zer0
 @bot.command(name='Zer00', aliases=['zer0'])
@@ -774,18 +846,18 @@ async def LogOut(ctx):
 
 
 ##Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
