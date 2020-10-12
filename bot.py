@@ -709,12 +709,12 @@ async def sendmail(ctx):
                     await status.edit(content=f'{ctx.author.mention}\nMail Sent Succssfully!')
 
                 elif reaction == '❌':
-                    print('no')
+
                     await ctx.send('Mailing Request Cancelled')
                 
 
             except asyncio.TimeoutError:
-                await temp.edit(content='Request Timedout')
+                await temp.edit(content='I\'m tired of waiting.')
 
             except smtplib.SMTPRecipientsRefused:
                 await status.edit(content='Invalid Email Address')
@@ -729,16 +729,13 @@ async def sendmail(ctx):
 async def announce(ctx, channel:discord.TextChannel):
     if ctx.author.id == BOT_OWNER_ID:
         try:
-
-
             await ctx.send('What do you want to announce?')
             content=  await bot.wait_for('message', timeout=300)
 
             await channel.send(content.content)
 
-
         except asyncio.TimeoutError:
-            pass
+            ctx.send('I can\'t wait any longer')
 
 
 #Copy Message And Send
@@ -750,56 +747,58 @@ async def copypaste(ctx, channel: discord.TextChannel, message: discord.Message)
 #create embed
 @bot.command()
 async def embed(ctx, *content):
-    content= ' '.join(content)
+    try:
+        content= ' '.join(content)
 
-    def check(m):
-        return None if m.lower()=='no' else m
+        def check(m):
+            return None if m.lower()=='no' else m
 
-    await ctx.send('Any Title?')
-    title= (await bot.wait_for('message',timeout=100)).content
-    await asyncio.sleep(1)
-
-    await ctx.send('Any Description?')
-    description= (await bot.wait_for('message',timeout=100)).content
-    await asyncio.sleep(1)
-
-    embed= Embed(
-        title=check(title), 
-        description=check(description),
-        color= random.choice(HEX_COLORS)
-    )
-
-    a=True
-    def fort(m):
-        return False if m.lower()=='false' else True
-        
-    while a==True:
-        await ctx.send('Any Fields?')
-        field= await bot.wait_for('message',timeout=100)
-        field=field.content
-
-        if field.lower()=='no':
-            break
-        
+        await ctx.send('Any Title?')
+        title= (await bot.wait_for('message',timeout=100)).content
         await asyncio.sleep(1)
 
-        name= (' '.join(field.split('--')[0:1])).strip()
-        value= (' '.join(field.split('--')[1:2])).strip()
-        inline= fort(field.split('--')[-1].strip())
+        await ctx.send('Any Description?')
+        description= (await bot.wait_for('message',timeout=100)).content
+        await asyncio.sleep(1)
 
-        embed.add_field(name=name, 
-                        value= value, 
-                        inline= inline
+        embed= Embed(
+            title=check(title), 
+            description=check(description),
+            color= random.choice(HEX_COLORS)
         )
 
-        
-        print(f'{name}\n{value}\n{inline}')
-    await ctx.send(content= content, embed=embed)
+        a=True
+        def fort(m):
+            return False if m.lower()=='false' else True
+            
+        while a==True:
+            await ctx.send('Any Fields?')
+            field= await bot.wait_for('message',timeout=100)
+            field=field.content
+
+            if field.lower()=='no':
+                break
+            
+            await asyncio.sleep(1)
+
+            name= (' '.join(field.split('--')[0:1])).strip()
+            value= (' '.join(field.split('--')[1:2])).strip()
+            inline= fort(field.split('--')[-1].strip())
+
+            embed.add_field(name=name, 
+                            value= value, 
+                            inline= inline
+            )
+
+        await ctx.send(content= content, embed=embed)
+
+    except asyncio.TimeoutError:
+        ctx.send('I can\'t wait any longer')
 
 
     
 
-#print Zer0
+#Zer000000000000000000000000000000000
 @bot.command(name='Zer00', aliases=['zer0'])
 async def zer0(ctx):
     """
@@ -845,19 +844,19 @@ async def LogOut(ctx):
  #========================================================  
 
 
-##Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+#Error Handling
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
