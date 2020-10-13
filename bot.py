@@ -140,7 +140,10 @@ async def on_member_join(member):
 #Server Leave
 @bot.event
 async def on_member_remove(member):
-    embed=discord.Embed(color=random.choice(HEX_COLORS), description=f'**{member.name}** has left the server.\nGoodBye:wave:')
+    embed=discord.Embed(
+            color=random.choice(HEX_COLORS), 
+            description=f'**{member.name}** has left the server.\nGoodBye:wave:'
+        )
     embed.set_thumbnail(url=f'{member.avatar_url}')
     embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
     embed.set_footer(text=f'{member.guild}', icon_url=f'{member.guild.icon_url}')
@@ -149,8 +152,6 @@ async def on_member_remove(member):
     channel = member.guild.get_channel(756452827395784775)
 
     await channel.send(embed=embed)
-
-
 
     #TOTAL MEMBERS COUNT
     try:
@@ -226,8 +227,7 @@ async def ping_error(ctx, error):
 
  #DM MESSAGE
 @bot.command()
-async def dm(ctx,user:discord.Member=None, *message):
-
+async def dm(ctx, user:discord.Member, *message): 
     if ctx.author.id == BOT_OWNER_ID:
         message= ' '.join(list(message))
         await user.send(message)
@@ -245,7 +245,7 @@ async def dm_error(ctx, error):
 @bot.command(name='ClearMessages',  aliases=['clear','clearmsg','cls'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
 
-async def clear(ctx, amount=0):
+async def clear(ctx, amount=1):
     """
     Delete Messages
     """
@@ -310,7 +310,7 @@ async def addcom(ctx, *args):
 #Delete COmmand command
 @bot.command(name='DeleteCustomCommand', aliases=['delcom','deletecommand'])
 @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
-@commands.cooldown(1,20,BucketType.member)
+# @commands.cooldown(1,60*60*24,BucketType.member)
 async def delcom(ctx,*, command):
     """
     Delete a Command
@@ -361,7 +361,7 @@ async def delcom(ctx,*, command):
 
 #USER INFO
 @bot.command(name="UserInformation", aliases=["userinfo", "ui"])
-@commands.cooldown(5,60*60*24,BucketType.member)
+# @commands.cooldown(2,60*60,BucketType.member)
 async def user_info(ctx, target: Optional[Member]):
     """
     All the Information about the User
@@ -387,7 +387,6 @@ async def user_info(ctx, target: Optional[Member]):
                     # ("Created at", target.created_at.strftime("%b %d, %Y "), True),
                     # ("Boosted", bool(target.premium_since), True)
                     # # ("ID", target.id, True)
-
                 ]
                     
                 
@@ -419,8 +418,6 @@ async def server_info(ctx):
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
         fields =[
-                    
-                    
                     ("Owner", f'{ctx.guild.owner.mention}', True),
                     ("Region", f'{str(ctx.guild.region).title()}', True),
                     ("Created on", ctx.guild.created_at.strftime("%b %d, %Y "), True),
@@ -774,7 +771,7 @@ async def embed(ctx, *content):
         while a==True:
             await ctx.send('Any Fields?')
             field= await bot.wait_for('message',timeout=100)
-            field=field.content
+            field= str(field.content)
 
             if field.lower()=='no':
                 break
