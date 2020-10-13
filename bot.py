@@ -732,7 +732,7 @@ async def announce(ctx, channel:discord.TextChannel):
             await channel.send(content.content)
 
         except asyncio.TimeoutError:
-            ctx.send('I can\'t wait any longer')
+            await ctx.send('I can\'t wait any longer')
 
 
 #Copy Message And Send
@@ -790,7 +790,7 @@ async def embed(ctx, *content):
         await ctx.send(content= content, embed=embed)
 
     except asyncio.TimeoutError:
-        ctx.send('I can\'t wait any longer')
+        await ctx.send('I can\'t wait any longer')
 
 
     
