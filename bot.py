@@ -356,7 +356,7 @@ async def delcom(ctx,*, command):
             await ctx.send(f':exclamation: The CORRECT Format for deleting a Command is:\n**```  {SERVER_PREFIX}delcom [command-name] ```**')
 
 
-#========================================================  
+#========================================================
 
 
 #USER INFO
@@ -379,7 +379,7 @@ async def user_info(ctx, target: Optional[Member]):
                     ("Name", f'{str(target)} {"**Bot**" if target.bot else ""}', True),
                     ('Nickname', str(target.nick),True),
                     ("Top role", target.top_role.mention, True),
-
+                    
                     ("Status", str(target.status).title(), True),
                     ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
                     ("Joined at", target.joined_at.strftime("%b %d, %Y "), False)
@@ -558,7 +558,7 @@ async def inv(ctx):
 
 #List Server Emojis
 @bot.command()
-@commands.cooldown(1,60*60, BucketType.member)
+# @commands.cooldown(1,60*60, BucketType.member)
 async def listemoji(ctx, extra='list'):
     """
     List all the custom emoji of the server
@@ -569,35 +569,27 @@ async def listemoji(ctx, extra='list'):
         animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
 
         if len(non_animated_list)==0 and len(animated_list)==0:
-            await ctx.send(f'{ctx.author.mention}\n:exclamation: No custom emojis has been added.')
+            await ctx.send(f'{ctx.author.mention}\n:exclamation: No custom emojis has been added in this Server.')
         else:
             #NON ANIMATED EMOJIS
-            
             if len(non_animated_list)>0:
-
+                await ctx.send('**Custom Emojis**')
                 k=0
                 non_animated=''
                 for i in range(int(len(non_animated_list)/5)+1):
-                    non_animated+= ' '.join(non_animated_list[k:k+5])+'\n'
+                    non_animated+= ' '.join(non_animated_list[k:k+5])
                     k+=5
-                non_animated= non_animated.strip('\n')
-
-                await ctx.send('**Custom Emojis**')
-                await ctx.send(non_animated)
-
+                    await ctx.send(non_animated)
             
             #ANIMATED EMOJIS
             if len(animated_list)>0:
-
+                await ctx.send('**Custom Animated Emojis**')
                 k=0
                 animated=''
                 for i in range(int(len(animated_list)/5)+1):
-                    animated+= ' '.join(animated_list[k:k+5])+'\n'
+                    animated+= ' '.join(animated_list[k:k+5])
                     k+=5
-                animated= animated.strip('\n')
-                
-                await ctx.send('**Custom Animated Emojis**')
-                await ctx.send(animated)
+                    await ctx.send(animated)
       
 # ========================================================
 
@@ -627,6 +619,7 @@ async def massreactemoji(ctx, channel, message, *args):
         await message.add_reaction(i)
 
     await ctx.message.add_reaction('☑')
+
 # ========================================================
 
 
@@ -715,10 +708,10 @@ async def sendmail(ctx):
 
             except smtplib.SMTPRecipientsRefused:
                 await status.edit(content='Invalid Email Address')
-
             except:
                 await ctx.send('Errorrrrr')
 
+# ========================================================
 
 
 #Bot Announce
@@ -734,12 +727,17 @@ async def announce(ctx, channel:discord.TextChannel):
         except asyncio.TimeoutError:
             await ctx.send('I can\'t wait any longer')
 
+# ========================================================
+
 
 #Copy Message And Send
 @bot.command()
 async def copypaste(ctx, channel: discord.TextChannel, message: discord.Message):
     if ctx.author.id == BOT_OWNER_ID:
         await channel.send(content=message.content, embed=message.embeds[0])
+
+# ========================================================
+
 
 #create embed
 @bot.command()
@@ -792,8 +790,8 @@ async def embed(ctx, *content):
     except asyncio.TimeoutError:
         await ctx.send('I can\'t wait any longer')
 
+# ========================================================
 
-    
 
 #Zer000000000000000000000000000000000
 @bot.command(name='Zer00', aliases=['zer0'])
@@ -834,11 +832,11 @@ async def LogOut(ctx):
         memberr = await bot.fetch_user(483179796323631115)
         
         await ctx.message.add_reaction('☑')
-        await memberr.send(f'Logged Out by: **{ctx.author.id}** || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
+        await memberr.send(f'Logged Out by: `{ctx.author.name}#{ctx.author.discriminator}` | `{ctx.author.id}` || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
         await ctx.send(f'Bye Bye')
         await bot.close()
  
- #========================================================  
+ #========================================================
 
 
 #Error Handling
