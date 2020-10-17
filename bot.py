@@ -34,6 +34,7 @@ bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
 # bot.remove_command('help')
 
 
+
 #bot Start
 @bot.event
 async def on_ready():
@@ -42,6 +43,19 @@ async def on_ready():
             activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE")
     )
     print('Bot is Online. GTG')
+    with open('time.txt','w') as f:
+        time=str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+        f.write(time)
+
+
+@bot.command()
+async def uptime(ctx):
+    with open('time.txt','r') as f:
+        a=f.readlines()
+        online_time= datetime.strptime(a[0], "%m/%d/%Y, %H:%M:%S")
+        c_time=datetime.now()
+        uptime= str(c_time - online_time).split('.')[0]
+        await ctx.send(f'I\'m up for\n> {uptime}')
 
 @bot.command()
 async def aplaying(ctx,*name):
@@ -839,19 +853,19 @@ async def LogOut(ctx):
  #========================================================
 
 
-#Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+#####Error Handling
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
 
