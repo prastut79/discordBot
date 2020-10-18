@@ -595,7 +595,7 @@ async def listemoji(ctx, extra='list'):
                 k=0
                 non_animated=''
                 for i in range(int(len(non_animated_list)/5)+1):
-                    non_animated+= ' '.join(non_animated_list[k:k+5])
+                    non_animated = ' '.join(non_animated_list[k:k+5])
                     k+=5
                     await ctx.send(non_animated)
             
@@ -605,7 +605,7 @@ async def listemoji(ctx, extra='list'):
                 k=0
                 animated=''
                 for i in range(int(len(animated_list)/5)+1):
-                    animated+= ' '.join(animated_list[k:k+5])
+                    animated = ' '.join(animated_list[k:k+5])
                     k+=5
                     await ctx.send(animated)
       
