@@ -50,12 +50,18 @@ async def on_ready():
 
 @bot.command()
 async def uptime(ctx):
-    with open('time.txt','r') as f:
-        a=f.readlines()
-        online_time= datetime.strptime(a[0], "%m/%d/%Y, %H:%M:%S")
-        c_time=datetime.now()
-        uptime= str(c_time - online_time).split('.')[0]
-        await ctx.send(f'I\'m up for\n> {uptime}')
+    if ctx.author.id == BOT_OWNER_ID:
+        with open('time.txt','r') as f:
+            a=f.readline()
+            online_time= datetime.strptime(a, "%m/%d/%Y, %H:%M:%S")
+            c_time=datetime.now()
+            uptime= str(c_time - online_time).split('.')[0] 
+
+        embed=Embed(
+            color=random.choice(HEX_COLORS),
+            description=f'⌛ **UpTime:** {uptime}'
+        )
+        await ctx.send(embed=embed)
 
 @bot.command()
 async def aplaying(ctx,*name):
