@@ -103,6 +103,33 @@ async def alistening(ctx,*name):
         )
         await ctx.message.add_reaction('☑')
 
+#Ping Command
+@bot.command(name='BotPing', aliases=['ping'])
+@commands.cooldown(1, 5, BucketType.guild)
+async def _bot_ping(ctx):
+    """
+    Ping the Bot
+    """
+    if ctx.author.bot == False:
+        start= time()
+        message = await ctx.send('**Pinging...**')
+        end= time()
+
+        description=f'⌛ **Latency:** {int(round(bot.latency*1000,1))}ms \n\u200b\n⏰ **Response Time:** {int((end-start)*1000)}ms'
+
+        embed= discord.Embed(
+                color=random.choice(HEX_COLORS), 
+                description=description
+            )
+
+        await message.edit(content='',embed=embed)
+
+@_bot_ping.error
+async def ping_error(ctx, error):
+    if not isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.send( f'**There was an error while Pinging the bot.**')
+
+
 #========================================================
 
 
@@ -212,35 +239,6 @@ async def on_message(message):
                 await i.delete()
 
         await bot.process_commands(message)
-
-#========================================================
-
-
-#Ping Command
-@bot.command(name='BotPing', aliases=['ping'])
-@commands.cooldown(1, 5, BucketType.guild)
-async def _bot_ping(ctx):
-    """
-    Ping the Bot
-    """
-    if ctx.author.bot == False:
-        start= time()
-        message = await ctx.send('**Pinging...**')
-        end= time()
-
-        description=f'⌛ **Latency:** {int(round(bot.latency*1000,1))}ms \n\u200b\n⏰ **Response Time:** {int((end-start)*1000)}ms'
-
-        embed= discord.Embed(
-                color=random.choice(HEX_COLORS), 
-                description=description
-            )
-
-        await message.edit(content='',embed=embed)
-
-@_bot_ping.error
-async def ping_error(ctx, error):
-    if not isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.send( f'**There was an error while Pinging the bot.**')
 
 #========================================================
 
@@ -793,6 +791,9 @@ async def embed(ctx, *content):
 
             if field.lower()=='no':
                 break
+
+            if '--' not in field:
+                return
             
             await asyncio.sleep(1)
 
@@ -849,31 +850,30 @@ async def LogOut(ctx):
     Closes The Bot
     """
     if ctx.author.bot == False:
-        memberr = await bot.fetch_user(483179796323631115)
-        
         await ctx.message.add_reaction('☑')
-        await memberr.send(f'Logged Out by: `{ctx.author.name}#{ctx.author.discriminator}` | `{ctx.author.id}` || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
         await ctx.send(f'Bye Bye')
+        # memberr = await bot.fetch_user(483179796323631115)
+        # await memberr.send(f'Logged Out by: `{ctx.author.name}#{ctx.author.discriminator}` | `{ctx.author.id}` || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
         await bot.close()
  
  #========================================================
 
 
-#####Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+####Error Handling
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
-DISCORD_TOKEN = environ.get('DISCORD_TOKEN') 
+DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
 bot.run(DISCORD_TOKEN)
 
