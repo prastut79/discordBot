@@ -8,6 +8,7 @@ import csv
 import random
 from time import time
 import smtplib
+import json
 
 import discord
 from discord.ext import commands
@@ -28,9 +29,11 @@ HEX_COLORS=[
 
 
 #'''---------------------------START--------------------------------'''
-SERVER_PREFIX=environ.get('BOT_PREFIX')
+with open('server_config.json','r') as f:
+    SERVER_CONFIG = json.load(f)
+# print(type(SERVER_CONFIG['welcome_message_channel']))
 
-bot = commands.Bot(command_prefix=SERVER_PREFIX, case_insensitive=True)
+bot = commands.Bot(command_prefix=SERVER_CONFIG['server_prefix'], case_insensitive=True)
 # bot.remove_command('help')
 
 
@@ -137,57 +140,66 @@ async def ping_error(ctx, error):
 @bot.event#member.id
 async def on_member_join(member):
     #WELCOME MESSAGE------------------------------------------------------------
-    embed=discord.Embed(color=random.choice(HEX_COLORS), 
+    embed=Embed(color=random.choice(HEX_COLORS), 
                         description=f'{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
         )
     embed.set_thumbnail(url=f'{member.avatar_url}')
     embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
-    embed.set_footer(text=f'\n{member.guild}', icon_url=f'{member.guild.icon_url}')
+    embed.set_footer(text=f'{member.guild}', icon_url=f'{member.guild.icon_url}')
     embed.timestamp = datetime.utcnow()
-
-    channel = member.guild.get_channel(756417893314461766)
-
-    await channel.send(embed=embed)
-
-    #create inv link
-    inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
     
-    try:
-        #send private message
-        welcomemsg= await member.send(f'Welcome {member.mention},\n\n    Have a great time here in **{member.guild}**\n\n    Enjoyyyy:tada:\n\n    Here is the Invitation Link to this Server:\n    {inv_link}')
-        with open('welcom_gifs.txt','r') as f:
-            reader=f.readlines()
-        gif_to_send=random.choice(reader)
+
+    #send welcome message
+    welcome_message_channel = member.guild.get_channel(SERVER_CONFIG['welcome_message_channel'])
+    welcome_msg= await welcome_message_channel.send(embed=embed)
+    
+    #add reaction
+    welcome_emoji = discord.utils.get(member.guild.emojis, name='welcome')
+    await welcome_msg.add_reaction(welcome_emoji)
+
+    #EDIT TOTAL MEMBER COUNT
+    member_count_channel = member.guild.get_channel(SERVER_CONFIG['member_count_channel'])
+    await member_count_channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
+
+    #GIVE ROLE ON JOIN
+    role_to_give_on_join = list(SERVER_CONFIG['role_to_give_on_join'])
+    for i in role_to_give_on_join:
+        role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
+        await member.add_roles(role_to_give_on_join)
+        asyncio.sleep(1)
+
+    #_--------------------SEND DM---------------------------------------------
+    #create inv link
+    inv_link = await welcome_message_channel.create_invite(max_age=0, max_uses=0, unique=False)
+
+    welcome_dm = f'''\
+Welcome {member.mention}
+
+Have a great time here in **{member.guild}**
+
+Enjoyyyy:tada:
+    
+Here is the Invitation Link to this Server:
+{inv_link}
+    '''
+    #gifs
+    with open('welcome_gifs.txt','r') as f:
+        gifs = f.readlines()
         
-        await member.send(gif_to_send)         #SEND GIFs
-    except:
-        pass
+    embed= Embed(
+        color= random.choice(HEX_COLORS),
+        description=welcome_dm
+        )
+    embed.set_image(url=random.choice(gifs))
+    await member.send(embed=embed)
 
-
-    try:
-        channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
-    except:
-        memberr = await member.guild.owner
-        await memberr.send(f'Couldn\'n change the total member count')
-
-
-    #-----------------------------------------------------------#WELCOME MESSAGE
-
-    #GIVE MEMBER ROLE ON JOIN
-    role_member = discord.utils.get(member.guild.roles, name='Member')
-    await member.add_roles(role_member)
-
-    #welcome Emoji
-    welcomeemoji = discord.utils.get(member.guild.emojis, name='welcome')
-    welcomemsg.add_reaction(welcomeemoji)
 #========================================================
 
 
 #Server Leave
 @bot.event
 async def on_member_remove(member):
-    embed=discord.Embed(
+    embed=Embed(
             color=random.choice(HEX_COLORS), 
             description=f'**{member.name}** has left the server.\nGoodBye:wave:'
         )
@@ -196,17 +208,13 @@ async def on_member_remove(member):
     embed.set_footer(text=f'{member.guild}', icon_url=f'{member.guild.icon_url}')
     embed.timestamp = datetime.utcnow()
 
-    channel = member.guild.get_channel(756452827395784775)
+    #SEND GOODBYE MESSAGE
+    goodybye_channel = member.guild.get_channel(SERVER_CONFIG['goodbye_message_channel'])
+    await goodybye_channel.send(embed=embed)
 
-    await channel.send(embed=embed)
-
-    #TOTAL MEMBERS COUNT
-    try:
-        channel = member.guild.get_channel(757225313943027772)
-        await channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
-    except:
-        memberr = await bot.fetch_user(483179796323631115)
-        await memberr.send(f'Couldn\'n change the total member count')  
+    #EDIT TOTAL MEMBER COUNT
+    member_count_channel = member.guild.get_channel(SERVER_CONFIG['member_count_channel'])
+    await member_count_channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
 
 #========================================================
 
@@ -577,7 +585,7 @@ async def inv(ctx):
 #List Server Emojis
 @bot.command()
 # @commands.cooldown(1,60*60, BucketType.member)
-async def listemoji(ctx, extra='list'):
+async def serveremoji(ctx, extra='list'):
     """
     List all the custom emoji of the server
     """
@@ -591,23 +599,25 @@ async def listemoji(ctx, extra='list'):
         else:
             #NON ANIMATED EMOJIS
             if len(non_animated_list)>0:
-                await ctx.send('**Custom Emojis**')
+                await ctx.send('**Server Emojis**')
                 k=0
                 non_animated=''
                 for i in range(int(len(non_animated_list)/5)+1):
                     non_animated = ' '.join(non_animated_list[k:k+5])
                     k+=5
                     await ctx.send(non_animated)
+                    asyncio.sleep(0.4)
             
             #ANIMATED EMOJIS
             if len(animated_list)>0:
-                await ctx.send('**Custom Animated Emojis**')
+                await ctx.send('**Server Animated Emojis**')
                 k=0
                 animated=''
                 for i in range(int(len(animated_list)/5)+1):
                     animated = ' '.join(animated_list[k:k+5])
                     k+=5
                     await ctx.send(animated)
+                    asyncio.sleep(0.4)
       
 # ========================================================
 
@@ -857,21 +867,24 @@ async def LogOut(ctx):
         await bot.close()
  
  #========================================================
-
-
+@bot.command()
+async def testbot(ctx):
+    wwel = ctx.guild.get_channel(SERVER_CONFIG['welcome_message_channel'])
+    await wwel.send('Hello')
+    
 ####Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
