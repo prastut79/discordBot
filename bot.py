@@ -17,8 +17,10 @@ from discord.ext.commands import command, cooldown , BucketType
 
 import asyncio
 
-BOT_OWNER_ID = 483179796323631115
-BOT_ID = 756816513037762581
+intents = discord.Intents.default()
+intents.members = True
+
+
 
 HEX_COLORS=[
     0x4B4CAD, 0xA2D7CC, 0x74AD4B, 0x000000, 0x52fff1, 0xFF51EB, 0xC481A7, 0xffadad, 0xe29578, 0xBD93BD,
@@ -31,9 +33,12 @@ HEX_COLORS=[
 #'''---------------------------START--------------------------------'''
 with open('server_config.json','r') as f:
     SERVER_CONFIG = json.load(f)
-# print(type(SERVER_CONFIG['welcome_message_channel']))
 
-bot = commands.Bot(command_prefix=SERVER_CONFIG['server_prefix'], case_insensitive=True)
+BOT_OWNER_ID = SERVER_CONFIG['bot_owner_id']
+BOT_ID = SERVER_CONFIG['bot_id']
+SERVER_PREFIX = SERVER_CONFIG['server_prefix']
+
+bot = commands.Bot(command_prefix= SERVER_PREFIX, case_insensitive=True, intents=intents)
 # bot.remove_command('help')
 
 
@@ -137,8 +142,9 @@ async def ping_error(ctx, error):
 
 
 #Serve Join
-@bot.event#member.id
+@bot.event
 async def on_member_join(member):
+
     #WELCOME MESSAGE------------------------------------------------------------
     embed=Embed(color=random.choice(HEX_COLORS), 
                         description=f'{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
@@ -152,46 +158,51 @@ async def on_member_join(member):
     #send welcome message
     welcome_message_channel = member.guild.get_channel(SERVER_CONFIG['welcome_message_channel'])
     welcome_msg= await welcome_message_channel.send(embed=embed)
-    
-    #add reaction
-    welcome_emoji = discord.utils.get(member.guild.emojis, name='welcome')
-    await welcome_msg.add_reaction(welcome_emoji)
 
+    
     #EDIT TOTAL MEMBER COUNT
     member_count_channel = member.guild.get_channel(SERVER_CONFIG['member_count_channel'])
     await member_count_channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
 
     #GIVE ROLE ON JOIN
-    role_to_give_on_join = list(SERVER_CONFIG['role_to_give_on_join'])
-    for i in role_to_give_on_join:
-        role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
-        await member.add_roles(role_to_give_on_join)
-        asyncio.sleep(1)
+    if member.bot:
+        role_bot = discord.utils.get(member.guild.roles, id=SERVER_CONFIG.get('role_bot_id'))
+        await member.add_roles(role_bot)
+    else:
+        role_to_give_on_join = list(SERVER_CONFIG['role_to_give_on_join'])
+        for i in role_to_give_on_join:
+            role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
+            await member.add_roles(role_to_give_on_join)
+            await asyncio.sleep(1)
 
-    #_--------------------SEND DM---------------------------------------------
-    #create inv link
-    inv_link = await welcome_message_channel.create_invite(max_age=0, max_uses=0, unique=False)
+        #_--------------------SEND DM---------------------------------------------
+        #create inv link
+        inv_link = await welcome_message_channel.create_invite(max_age=0, max_uses=0, unique=False)
 
-    welcome_dm = f'''\
+        welcome_dm = f'''\
 Welcome {member.mention}
 
 Have a great time here in **{member.guild}**
 
 Enjoyyyy:tada:
-    
+        
 Here is the Invitation Link to this Server:
 {inv_link}
-    '''
-    #gifs
-    with open('welcome_gifs.txt','r') as f:
-        gifs = f.readlines()
+'''
+        #gifs
+        with open('welcome_gifs.txt','r') as f:
+            gifs = f.readlines()
+            
+        embed= Embed(
+            color= random.choice(HEX_COLORS),
+            description=welcome_dm
+            )
+        embed.set_image(url=random.choice(gifs))
+        await member.send(embed=embed)
         
-    embed= Embed(
-        color= random.choice(HEX_COLORS),
-        description=welcome_dm
-        )
-    embed.set_image(url=random.choice(gifs))
-    await member.send(embed=embed)
+    #add reaction
+    welcome_emoji = discord.utils.get(member.guild.emojis, name='welcome')
+    await welcome_msg.add_reaction(welcome_emoji)
 
 #========================================================
 
@@ -606,7 +617,7 @@ async def serveremoji(ctx, extra='list'):
                     non_animated = ' '.join(non_animated_list[k:k+5])
                     k+=5
                     await ctx.send(non_animated)
-                    asyncio.sleep(0.4)
+                    await asyncio.sleep(0.4)
             
             #ANIMATED EMOJIS
             if len(animated_list)>0:
@@ -617,7 +628,7 @@ async def serveremoji(ctx, extra='list'):
                     animated = ' '.join(animated_list[k:k+5])
                     k+=5
                     await ctx.send(animated)
-                    asyncio.sleep(0.4)
+                    await asyncio.sleep(0.4)
       
 # ========================================================
 
