@@ -4,8 +4,7 @@
     "welcome_message_channel": 756417893314461766,
     "goodbye_message_channel": 756452827395784775,
     "role_to_give_on_join": [
-        756428207200403477, 
-        756398801874321408
+        756428207200403477
     ],
     "role_bot_id": 756429809759813683,
     "bot_owner_id": 483179796323631115,

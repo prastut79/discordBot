@@ -34,9 +34,10 @@ HEX_COLORS=[
 with open('server_config.json','r') as f:
     SERVER_CONFIG = json.load(f)
 
+SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 BOT_OWNER_ID = SERVER_CONFIG['bot_owner_id']
 BOT_ID = SERVER_CONFIG['bot_id']
-SERVER_PREFIX = SERVER_CONFIG['server_prefix']
+
 
 bot = commands.Bot(command_prefix= SERVER_PREFIX, case_insensitive=True, intents=intents)
 # bot.remove_command('help')
@@ -166,10 +167,10 @@ async def on_member_join(member):
 
     #GIVE ROLE ON JOIN
     if member.bot:
-        role_bot = discord.utils.get(member.guild.roles, id=SERVER_CONFIG.get('role_bot_id'))
+        role_bot = discord.utils.get(member.guild.roles, id= SERVER_CONFIG.get('role_bot_id'))
         await member.add_roles(role_bot)
     else:
-        role_to_give_on_join = list(SERVER_CONFIG['role_to_give_on_join'])
+        role_to_give_on_join = SERVER_CONFIG['role_to_give_on_join']
         for i in role_to_give_on_join:
             role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
             await member.add_roles(role_to_give_on_join)
