@@ -62,11 +62,10 @@ async def uptime(ctx):
     if ctx.author.id == BOT_OWNER_ID:
         with open('time.txt','r') as f:
             a=f.readline()
-            print(a)
             online_time= datetime.strptime(a, "%m/%d/%Y, %H:%M:%S")
             c_time=datetime.now()
             uptime= str(c_time - online_time).split('.')[0] 
-            print(uptime)
+
         embed=Embed(
             color=random.choice(HEX_COLORS),
             description=f'⌛ **UpTime:** {uptime}'
