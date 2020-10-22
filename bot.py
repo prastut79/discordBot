@@ -65,7 +65,7 @@ async def uptime(ctx):
             online_time= datetime.strptime(a, "%m/%d/%Y, %H:%M:%S")
             c_time=datetime.now()
             uptime= str(c_time - online_time).split('.')[0] 
-
+            print(uptime)
         embed=Embed(
             color=random.choice(HEX_COLORS),
             description=f'⌛ **UpTime:** {uptime}'
