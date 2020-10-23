@@ -5,10 +5,13 @@ from os import environ
 from datetime import datetime 
 from typing import Optional
 import csv
+import json
 import random
 from time import time
 import smtplib
-import json
+
+import requests
+import praw
 
 import discord
 from discord.ext import commands
@@ -33,6 +36,14 @@ HEX_COLORS=[
 #'''---------------------------START--------------------------------'''
 with open('server_config.json','r') as f:
     SERVER_CONFIG = json.load(f)
+
+#login reddit 
+reddit = praw.Reddit(client_id=SERVER_CONFIG['reddit_client_id'],
+                     client_secret=environ.get('reddit_client_secret'),
+                     username=SERVER_CONFIG['reddit_username'],
+                     password=environ.get('reddit_password'),
+                     user_agent= SERVER_CONFIG['reddit_user_agent']
+                    )
 
 SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 BOT_OWNER_ID = SERVER_CONFIG['bot_owner_id']
@@ -836,6 +847,44 @@ async def embed(ctx, *content):
 # ========================================================
 
 
+#random image from a subreddit
+@bot.command()
+async def rndreddit(ctx, subred='memes',limit=100):
+    await ctx.channel.trigger_typing()
+    try:
+        subreddit = reddit.subreddit(subred)
+        top = subreddit.new(limit= limit)
+
+        all_posts = [x for x in top if not x.stickied]
+
+        rnd_post = random.choice(all_posts)
+
+        if not str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+            dec_link = f'{rnd_post.selftext}\n\
+                [Post Link]({rnd_post.url})\n\n\
+                ⬆ `{rnd_post.ups}`  ⬇ `{rnd_post.downs}`  💬 `{len(rnd_post.comments)}`'
+        else:
+            dec_link= f'{rnd_post.selftext}\n\n\
+                ⬆ `{rnd_post.ups}`  ⬇ `{rnd_post.downs}`  💬 `{len(rnd_post.comments)}`'
+
+        embed = Embed(
+            title= f'{rnd_post.title}',
+            url=f'https://www.reddit.com{rnd_post.permalink}',
+            color=random.choice(HEX_COLORS),
+            description= dec_link
+        )
+        #get Subreddit = f'[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+
+        if str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+            embed.set_image(url=rnd_post.url)
+
+        embed.set_footer(text=f'by u/{rnd_post.author}  •  {datetime.fromtimestamp(rnd_post.created).strftime("%d/%m/%Y")}',
+                        icon_url= subreddit.icon_img)
+
+        await ctx.send(embed=embed)
+    except:
+        await ctx.send('Error while fetching data')
+
 #Zer000000000000000000000000000000000
 @bot.command(name='Zer00', aliases=['zer0'])
 async def zer0(ctx):
@@ -882,18 +931,18 @@ async def LogOut(ctx):
 
 
 ####Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
