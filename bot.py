@@ -22,13 +22,11 @@ import asyncio
 
 intents = discord.Intents.all()
 
-
-
 HEX_COLORS=[
     0x4B4CAD, 0xA2D7CC, 0x74AD4B, 0x000000, 0x52fff1, 0xFF51EB, 0xC481A7, 0xffadad, 0xe29578, 0xBD93BD,
     0x22223b, 0x9DBBAE, 0x188FA7, 0x8C5F66, 0xADBCA5, 0xE8B9AB, 0xCB769E, 0x72B01D, 0xF7717D, 0x925E78,
     0x7F2982, 0x16001E, 0x610345, 0x044B7F, 0xF05365, 0xA1CDF1, 0xC3A197, 0xDBE4EE, 0xdeaaff, 0x00296b,
-    0x000000, 0xffffff
+    0x000000, 0xffffff, 0xed1111, 0xeba7a7
 ]
 
 
@@ -865,9 +863,10 @@ async def embed(ctx, *content):
 
 #random image from a subreddit
 @bot.command()
-@commands.cooldown(1,5,BucketType.guild)
+@commands.cooldown(1,7,BucketType.guild)
 async def rndreddit(ctx, subred='memes',limit=100):
     await ctx.channel.trigger_typing()
+    image_formats= tuple(SERVER_CONFIG['image_formats'])
     try:
         subreddit = reddit.subreddit(subred)
         top = subreddit.new(limit= limit)
@@ -877,15 +876,17 @@ async def rndreddit(ctx, subred='memes',limit=100):
         rnd_post = random.choice(all_posts)
         rnd_post_link = f'https://www.reddit.com{rnd_post.permalink}'
         urls_post = f'*{rnd_post.url}*\n'
-        if not str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+
+        if not str(rnd_post.url).endswith(image_formats):
             dec_link = f'{rnd_post.selftext}\n\
-{urls_post if not rnd_post.url== rnd_post_link else ""}\n\
-`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
-[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+    {urls_post if not rnd_post.url== rnd_post_link else ""}\n\
+    `⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
+    [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+
         else:
             dec_link= f'{rnd_post.selftext}\n\n\
-`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
-[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+    `⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
+    [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
         embed = Embed(
             title= f'{rnd_post.title}',
@@ -893,9 +894,8 @@ async def rndreddit(ctx, subred='memes',limit=100):
             color=random.choice(HEX_COLORS),
             description= dec_link
         )
-        #get Subreddit = f'[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
-        if str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+        if str(rnd_post.url).endswith(image_formats):
             embed.set_image(url=rnd_post.url)
 
         embed.set_footer(text=f'by u/{rnd_post.author}  •  {datetime.fromtimestamp(rnd_post.created).strftime("%d/%m/%Y")}',
@@ -943,26 +943,27 @@ async def LogOut(ctx):
     if ctx.author.bot == False:
         await ctx.message.add_reaction('☑')
         await ctx.send(f'Bye Bye')
-        # memberr = await bot.fetch_user(483179796323631115)
-        # await memberr.send(f'Logged Out by: `{ctx.author.name}#{ctx.author.discriminator}` | `{ctx.author.id}` || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
+        
+        memberr = await bot.fetch_user(483179796323631115)
+        await memberr.send(f'Logged Out by: `{ctx.author.name}#{ctx.author.discriminator}` | `{ctx.author.id}` || on `{datetime.utcnow().strftime(datetime.utcnow().strftime("%b %d, %Y | %H:%M:%S"))}`')
         await bot.close()
  
  #========================================================
 
 
 ###Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 

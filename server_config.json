@@ -16,5 +16,7 @@
     "reddit_username": "netsos798",
     "reddit_user_agent": "discord_bot",
     
-    "gmail_email": "netsos798@gmail.com"
-}
+    "gmail_email": "netsos798@gmail.com",
+
+    "image_formats": [".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif"]
+}   
