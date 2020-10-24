@@ -684,7 +684,7 @@ async def sendmail(ctx):
             smtp.ehlo()
             smtp.starttls()
             smtp.ehlo()
-            email = environ.get('GMAIL_EMAIL')
+            email = SERVER_CONFIG['gmail_email']
             password = environ.get('KHAI_K_HO')
 
             def check(m):
@@ -850,6 +850,7 @@ async def embed(ctx, *content):
 
 #random image from a subreddit
 @bot.command()
+@commands.cooldown(1,5,BucketType.guild)
 async def rndreddit(ctx, subred='memes',limit=100):
     await ctx.channel.trigger_typing()
     try:
@@ -859,20 +860,21 @@ async def rndreddit(ctx, subred='memes',limit=100):
         all_posts = [x for x in top if not x.stickied]
 
         rnd_post = random.choice(all_posts)
-
+        rnd_post_link = f'https://www.reddit.com{rnd_post.permalink}'
+        urls_post = f'*{rnd_post.url}*\n'
         if not str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
             dec_link = f'{rnd_post.selftext}\n\
-*{rnd_post.url}*\n\n\
-`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`  •  \
+{urls_post if not rnd_post.url== rnd_post_link else ""}\n\
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
 [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
         else:
             dec_link= f'{rnd_post.selftext}\n\n\
-`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`  •  \
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
 [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
         embed = Embed(
             title= f'{rnd_post.title}',
-            url=f'https://www.reddit.com{rnd_post.permalink}',
+            url=rnd_post_link,
             color=random.choice(HEX_COLORS),
             description= dec_link
         )
@@ -933,19 +935,19 @@ async def LogOut(ctx):
  #========================================================
 
 
-####Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+###Error Handling
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
