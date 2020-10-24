@@ -38,12 +38,13 @@ with open('server_config.json','r') as f:
     SERVER_CONFIG = json.load(f)
 
 #login reddit 
-reddit = praw.Reddit(client_id=SERVER_CONFIG['reddit_client_id'],
-                     client_secret=environ.get('reddit_client_secret'),
-                     username=SERVER_CONFIG['reddit_username'],
-                     password=environ.get('reddit_password'),
-                     user_agent= SERVER_CONFIG['reddit_user_agent']
-                    )
+reddit = praw.Reddit(
+                    client_id=SERVER_CONFIG['reddit_client_id'],
+                    client_secret=environ.get('reddit_client_secret'),
+                    username=SERVER_CONFIG['reddit_username'],
+                    password=environ.get('reddit_password'),
+                    user_agent= SERVER_CONFIG['reddit_user_agent']
+        )
 
 SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 BOT_OWNER_ID = SERVER_CONFIG['bot_owner_id']
@@ -861,11 +862,13 @@ async def rndreddit(ctx, subred='memes',limit=100):
 
         if not str(rnd_post.url).endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
             dec_link = f'{rnd_post.selftext}\n\
-                [Post Link]({rnd_post.url})\n\n\
-                ⬆ `{rnd_post.ups}`  ⬇ `{rnd_post.downs}`  💬 `{len(rnd_post.comments)}`'
+*{rnd_post.url}*\n\n\
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`  •  \
+[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
         else:
             dec_link= f'{rnd_post.selftext}\n\n\
-                ⬆ `{rnd_post.ups}`  ⬇ `{rnd_post.downs}`  💬 `{len(rnd_post.comments)}`'
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`  •  \
+[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
         embed = Embed(
             title= f'{rnd_post.title}',
