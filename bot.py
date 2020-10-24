@@ -20,8 +20,7 @@ from discord.ext.commands import command, cooldown , BucketType
 
 import asyncio
 
-intents = discord.Intents.default()
-intents.members = True
+intents = discord.Intents.all()
 
 
 
@@ -603,8 +602,10 @@ async def inv(ctx):
     inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
 
     await ctx.author.send(f'Here is the Invitation link to This server\n{inv_link}')
+    await ctx.message.add_reaction('📥')
  
  #========================================================      
+
 
 #List Server Emojis
 @bot.command()
@@ -625,23 +626,37 @@ async def serveremoji(ctx, extra='list'):
             if len(non_animated_list)>0:
                 await ctx.send('**Server Emojis**')
                 k=0
-                non_animated=''
+                non_animated=[]
+                temp=''
                 for i in range(int(len(non_animated_list)/5)+1):
-                    non_animated = ' '.join(non_animated_list[k:k+5])
+                    temp += ' '.join(non_animated_list[k:k+5])+'\n'
                     k+=5
-                    await ctx.send(non_animated)
-                    await asyncio.sleep(0.4)
-            
+                    if k>24 and k<26:
+                        non_animated.append(temp)
+                        temp=''
+                non_animated.append(temp)
+         
+                for i in non_animated:
+                    await ctx.send(i)
+ 
+
             #ANIMATED EMOJIS
             if len(animated_list)>0:
                 await ctx.send('**Server Animated Emojis**')
                 k=0
-                animated=''
+                animated=[]
+                temp=''
                 for i in range(int(len(animated_list)/5)+1):
-                    animated = ' '.join(animated_list[k:k+5])
+                    temp += ' '.join(animated_list[k:k+5])+'\n'
                     k+=5
-                    await ctx.send(animated)
-                    await asyncio.sleep(0.4)
+                    if k>24 and k<26:
+                        animated.append(temp)
+                        temp=''
+                animated.append(temp)
+
+                for i in animated:
+                    await ctx.send(i)
+                    
       
 # ========================================================
 
@@ -936,18 +951,18 @@ async def LogOut(ctx):
 
 
 ###Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
