@@ -12,6 +12,7 @@ import smtplib
 
 import requests
 import praw
+import anime
 
 import discord
 from discord.ext import commands
@@ -67,59 +68,59 @@ async def on_ready():
 
 
 @bot.command()
+@commands.is_owner()
 async def uptime(ctx):
-    if ctx.author.id == BOT_OWNER_ID:
-        with open('time.txt','r') as f:
-            a=f.readline()
-            online_time= datetime.strptime(a, "%m/%d/%Y, %H:%M:%S")
-            c_time=datetime.now()
-            uptime= str(c_time - online_time).split('.')[0] 
+    with open('time.txt','r') as f:
+        a=f.readline()
+        online_time= datetime.strptime(a, "%m/%d/%Y, %H:%M:%S")
+        c_time=datetime.now()
+        uptime= str(c_time - online_time).split('.')[0] 
 
-        embed=Embed(
-            color=random.choice(HEX_COLORS),
-            description=f'⌛ **UpTime:** {uptime}'
-        )
-        await ctx.send(embed=embed)
+    embed=Embed(
+        color=random.choice(HEX_COLORS),
+        description=f'⌛ **UpTime:** {uptime}'
+    )
+    await ctx.send(embed=embed)
 
 @bot.command()
+@commands.is_owner()
 async def aplaying(ctx,*name):
-    if ctx.author.id == BOT_OWNER_ID:
-        name=' '.join(list(name))
-        await bot.change_presence(
-                status=discord.Status.idle, 
-                activity= discord.Game(name= name)
-        )
-        await ctx.message.add_reaction('☑')
+    name=' '.join(list(name))
+    await bot.change_presence(
+            status=discord.Status.idle, 
+            activity= discord.Game(name= name)
+    )
+    await ctx.message.add_reaction('☑')
 
 @bot.command()
+@commands.is_owner()
 async def astreaming(ctx, url, *name):
-    if ctx.author.id == BOT_OWNER_ID:
-        name = ' '.join(list(name))
-        await bot.change_presence(
-                status=discord.Status.idle,
-                activity=discord.Streaming(name= name,  url=url)
-        )
-        await ctx.message.add_reaction('☑')
+    name = ' '.join(list(name))
+    await bot.change_presence(
+            status=discord.Status.idle,
+            activity=discord.Streaming(name= name,  url=url)
+    )
+    await ctx.message.add_reaction('☑')
 
 @bot.command()
+@commands.is_owner()
 async def awatching(ctx,*name):
-    if ctx.author.id == BOT_OWNER_ID:
-        name= ' '.join(list(name))
-        await bot.change_presence(  
-                status=discord.Status.idle, 
-                activity=discord.Activity(type=discord.ActivityType.watching, name=name)
-        )
-        await ctx.message.add_reaction('☑')
+    name= ' '.join(list(name))
+    await bot.change_presence(  
+            status=discord.Status.idle, 
+            activity=discord.Activity(type=discord.ActivityType.watching, name=name)
+    )
+    await ctx.message.add_reaction('☑')
 
 @bot.command()
+@commands.is_owner()
 async def alistening(ctx,*name):
-    if ctx.author.id == BOT_OWNER_ID:
-        name=' '.join(list(name))
-        await bot.change_presence(
-                status=discord.Status.idle, 
-                activity=discord.Activity(type=discord.ActivityType.listening, name=name)
-        )
-        await ctx.message.add_reaction('☑')
+    name=' '.join(list(name))
+    await bot.change_presence(
+            status=discord.Status.idle, 
+            activity=discord.Activity(type=discord.ActivityType.listening, name=name)
+    )
+    await ctx.message.add_reaction('☑')
 
 #Ping Command
 @bot.command(name='BotPing', aliases=['ping'])
@@ -144,7 +145,7 @@ async def _bot_ping(ctx):
 
 @_bot_ping.error
 async def ping_error(ctx, error):
-    if not isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+    if not isinstance(error, discord.ext.commands.errors.CommandOnCooldown) and not isinstance(error, discord.ext.commands.NotOwner):
         await ctx.send( f'**There was an error while Pinging the bot.**')
 
 
@@ -274,11 +275,11 @@ async def on_message(message):
 
  #DM MESSAGE
 @bot.command()
+@commands.is_owner()
 async def dm(ctx, user:discord.Member, *message): 
-    if ctx.author.id == BOT_OWNER_ID:
-        message= ' '.join(list(message))
-        await user.send(message)
-        await ctx.message.add_reaction('☑')
+    message= ' '.join(list(message))
+    await user.send(message)
+    await ctx.message.add_reaction('☑')
 
 @dm.error
 async def dm_error(ctx, error):
@@ -690,122 +691,122 @@ async def massreactemoji(ctx, channel, message, *args):
 
 #send mail
 @bot.command(name='MailSend', aliases=['sendmail','smtp'])
+@commands.is_owner()
 async def sendmail(ctx):
-    if ctx.author.id == BOT_OWNER_ID:
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        email = SERVER_CONFIG['gmail_email']
+        password = environ.get('KHAI_K_HO')
 
-        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            email = SERVER_CONFIG['gmail_email']
-            password = environ.get('KHAI_K_HO')
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
 
-            def check(m):
-                return m.author == ctx.author and m.channel == ctx.channel
+        try:
+            #target mail address
+            await ctx.send('Enter Target Email-Address')
+            temp = await bot.wait_for('message', check=check, timeout=30)
+            await temp.delete()
+            target = temp.content
 
-            try:
-                #target mail address
-                await ctx.send('Enter Target Email-Address')
-                temp = await bot.wait_for('message', check=check, timeout=30)
-                await temp.delete()
-                target = temp.content
+            if '.' not in target or '@' not in target:
+                await ctx.send('Invalid Email Address')
+                return
 
-                if '.' not in target or '@' not in target:
-                    await ctx.send('Invalid Email Address')
+            #mail subjct
+            await ctx.send('Enter mail subject')
+            temp = await bot.wait_for('message', check=check, timeout=50)
+            await temp.delete()
+            subject = temp.content
+
+
+            #mail content
+            await ctx.send('Enter Content')
+            temp = await bot.wait_for('message', check=check, timeout=60)
+            await temp.delete()
+            content = temp.content
+
+            #confirmation message
+            embed = Embed(
+                title='Mail Log',
+                color=random.choice(HEX_COLORS)
+            )
+            embed.add_field(name='Target', value=target, inline=False)
+            embed.add_field(name='Subject', value=subject, inline=False)
+            embed.add_field(name='Content', value=content, inline=False)
+
+            embed = await ctx.send(content='Confirm?',embed=embed)
+            await embed.add_reaction('☑')
+            await embed.add_reaction('❌')
+
+            def check_emj(reaction, user):
+                return user == ctx.author and (str(reaction.emoji) == '☑' or str(reaction.emoji) == '❌')
+
+            #confirm mail send
+            reaction, user = await bot.wait_for('reaction_add', check=check_emj, timeout=300)
+            await embed.delete()
+            reaction = str(reaction)
+
+            if reaction == '☑':
+
+                # attempt login
+                try:
+                    status = await ctx.send(content='Logging in...')
+                    smtp.login(email, password)
+                except:
+                    await status.edit('Couldnot login. Check the credentials and try again.')
                     return
 
-                #mail subjct
-                await ctx.send('Enter mail subject')
-                temp = await bot.wait_for('message', check=check, timeout=50)
-                await temp.delete()
-                subject = temp.content
+                await status.edit(content='Attempting to Send Mail...')
+                msg= f'Subject: {subject}\n\n{content}'
+                smtp.sendmail(email, target, msg)
+                await status.edit(content=f'{ctx.author.mention}\nMail Sent Succssfully!')
 
+            elif reaction == '❌':
 
-                #mail content
-                await ctx.send('Enter Content')
-                temp = await bot.wait_for('message', check=check, timeout=60)
-                await temp.delete()
-                content = temp.content
+                await ctx.send('Mailing Request Cancelled')
+            
 
-                #confirmation message
-                embed = Embed(
-                    title='Mail Log',
-                    color=random.choice(HEX_COLORS)
-                )
-                embed.add_field(name='Target', value=target, inline=False)
-                embed.add_field(name='Subject', value=subject, inline=False)
-                embed.add_field(name='Content', value=content, inline=False)
+        except asyncio.TimeoutError:
+            await temp.edit(content='I\'m tired of waiting.')
 
-                embed = await ctx.send(content='Confirm?',embed=embed)
-                await embed.add_reaction('☑')
-                await embed.add_reaction('❌')
-
-                def check_emj(reaction, user):
-                    return user == ctx.author and (str(reaction.emoji) == '☑' or str(reaction.emoji) == '❌')
-
-                #confirm mail send
-                reaction, user = await bot.wait_for('reaction_add', check=check_emj, timeout=300)
-                await embed.delete()
-                reaction = str(reaction)
-
-                if reaction == '☑':
-
-                    # attempt login
-                    try:
-                        status = await ctx.send(content='Logging in...')
-                        smtp.login(email, password)
-                    except:
-                        await status.edit('Couldnot login. Check the credentials and try again.')
-                        return
-
-                    await status.edit(content='Attempting to Send Mail...')
-                    msg= f'Subject: {subject}\n\n{content}'
-                    smtp.sendmail(email, target, msg)
-                    await status.edit(content=f'{ctx.author.mention}\nMail Sent Succssfully!')
-
-                elif reaction == '❌':
-
-                    await ctx.send('Mailing Request Cancelled')
-                
-
-            except asyncio.TimeoutError:
-                await temp.edit(content='I\'m tired of waiting.')
-
-            except smtplib.SMTPRecipientsRefused:
-                await status.edit(content='Invalid Email Address')
-            except:
-                await ctx.send('Errorrrrr')
+        except smtplib.SMTPRecipientsRefused:
+            await status.edit(content='Invalid Email Address')
+        except:
+            await ctx.send('Errorrrrr')
 
 # ========================================================
 
 
 #Bot Announce
 @bot.command()
+@commands.is_owner()
 async def announce(ctx, channel:discord.TextChannel):
-    if ctx.author.id == BOT_OWNER_ID:
-        try:
-            await ctx.send('What do you want to announce?')
-            content=  await bot.wait_for('message', timeout=300)
+    try:
+        await ctx.send('What do you want to announce?')
+        content=  await bot.wait_for('message', timeout=300)
 
-            await channel.send(content.content)
+        await channel.send(content.content)
 
-        except asyncio.TimeoutError:
-            await ctx.send('I can\'t wait any longer')
+    except asyncio.TimeoutError:
+        await ctx.send('I can\'t wait any longer')
 
 # ========================================================
 
 
 #Copy Message And Send
 @bot.command()
+@commands.is_owner()
 async def copypaste(ctx, channel: discord.TextChannel, message: discord.Message):
-    if ctx.author.id == BOT_OWNER_ID:
-        await channel.send(content=message.content, embed=message.embeds[0])
+    await channel.send(content=message.content, embed=message.embeds[0])
 
 # ========================================================
 
 
 #create embed
 @bot.command()
+@commands.is_owner()
 async def embed(ctx, *content):
     try:
         content= ' '.join(content)
@@ -905,14 +906,110 @@ async def rndreddit(ctx, subred='memes',limit=100):
     except:
         await ctx.send('Error while fetching data')
 
+
+
+#AnimeInfo Using ANILIST API
+@bot.command()
+async def animeinfo(ctx, anime_query):
+    info = anime.anime_info(anime_query)
+
+    embed=Embed(
+                title=info['title']['romaji'],
+                url= f"https://anilist.co/{info['type']}/{info['id']}",
+                description= info['description'].replace('<br>','\n').replace('\n\n','\n'),
+                color= random.choice(HEX_COLORS)
+    )
+
+    #Add English Name
+    embed.add_field(
+                name= "Synonym",
+                value= info['title']['english'] or info['title']['native'] or info['title']['userPreferred'] or 'Unknown'
+    )
+    #Add Genre Field
+    embed.add_field(
+                name= 'Genre',
+                value=f"{(', ').join(info['genres'])}" or 'Unknown',
+                inline= False
+    )
+
+    #Add Status, Start and Completed Date Field
+    embed.add_field(
+                name= 'Status',
+                value= info['status'].title() or 'Unknown'
+    )
+
+    if info['startDate']['year'] == None:
+        start_date = 'Unknown'
+    else:
+        start_date= f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
+    embed.add_field(
+                name= 'Start Date',
+                value= start_date
+    )
+
+    if info['endDate']['year'] == None:
+        end_date = 'Unknown'
+    else:
+        end_date= f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
+    embed.add_field(
+                name= 'End Date',
+                value= end_date 
+    )
+
+    embed.add_field(
+                name= "Episodes",
+                value= info['episodes'] or (info['nextAiringEpisode']['episode']-1 if info['status'] != 'NOT_YET_RELEASED' else 'Unknown')
+    )
+
+    embed.add_field(
+                name= "Score",
+                value= info['averageScore'] or info['meanScore']or 'Unknown'
+    )
+    rank = ''
+    for i in info['rankings']:
+        if i['allTime']:
+            rank+= f"{i['type'].title()} #{i['rank']}\n"
+    embed.add_field(
+                name= "Ranking(All Time)",
+                value= rank or 'Unknown'
+    )
+    embed.add_field(
+                name= "Season",
+                value= info['season'].title() if info['season'] != None else 'Unknown'
+    )
+
+    #Add 
+    embed.set_footer(
+                text=f"Source: Anilist.co",
+                icon_url= f"https://anilist.co/img/icons/android-chrome-512x512.png"
+    )
+
+
+    embed.set_author(
+                name=info['type'].title()
+    )
+
+    embed.set_thumbnail(url=f"{info['coverImage']['large']}")
+
+    if info['bannerImage'] != None:
+        embed.set_image(url=info['bannerImage'])
+
+    await ctx.send(embed=embed)
+    
+
+
+
+
+
 #Zer000000000000000000000000000000000
 @bot.command(name='Zer00', aliases=['zer0'])
+@commands.is_owner()
 async def zer0(ctx):
     """
     Zeroooooooooo0000000000
     """
-    if ctx.author.id == BOT_OWNER_ID:
-        a="""
+   
+    a="""
                      ,----,                                    
 	    	       .'   .`|                  ,----..           
 	    	    .'   .'   ;                 /   /   \          
@@ -929,7 +1026,7 @@ async def zer0(ctx):
 		    `---'         `----'             `---`                                   
         """
 
-        await ctx.send(f'```{a}```')
+    await ctx.send(f'```{a}```')
  
  #========================================================
 
@@ -952,18 +1049,18 @@ async def LogOut(ctx):
 
 
 ###Error Handling
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+#         pass
+#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+#         await ctx.message.add_reaction('⏳')
+#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+#         pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
