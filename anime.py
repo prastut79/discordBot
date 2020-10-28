@@ -69,10 +69,15 @@ def anime_info(request_query):
         type
         episodes
         season
+        synonyms
+        format
+        seasonYear
         description
         averageScore
         meanScore
         genres
+        popularity
+        favourites
         trailer {
             id
             site
@@ -87,6 +92,12 @@ def anime_info(request_query):
         nextAiringEpisode {
             episode
         }
+        studios(isMain: true) {
+            nodes {
+                name	
+            }
+        }
+        siteUrl
     }
     }
     """
@@ -97,5 +108,9 @@ def anime_info(request_query):
     info = json.loads(response.content)
 
     return info['data']['Media']
+
+# v=anime_info('Naruto')
+# a=json.dumps(v, indent=4)
+# print(a)
 
 

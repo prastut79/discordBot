@@ -910,92 +910,155 @@ async def rndreddit(ctx, subred='memes',limit=100):
 
 #AnimeInfo Using ANILIST API
 @bot.command()
+@commands.has_role(SERVER_CONFIG['role_anime_id'])
+@commands.cooldown(1,60,BucketType.user)
 async def animeinfo(ctx, *anime_query):
     info = anime.anime_info(' '.join(anime_query))
     if not isinstance(info,dict):
         await ctx.send(f"> {info}")
         return
 
+    if info['description']:
+        """Remove html tags"""
+        import re
+        clean = re.compile('<.*?>')
+        description= re.sub(clean, '', info['description'])+'\n\u200b'
+    else:
+        description= '-'+'\n\u200b'
+
     embed=Embed(
                 title=info['title']['romaji'],
-                url= f"https://anilist.co/{info['type']}/{info['id']}",
-                description= info['description'].replace('<br>','\n').replace('\n\n','\n'),
+                url= info['siteUrl'],
+                description= description,
                 color= random.choice(HEX_COLORS)
     )
 
-    #Add English Name
+    #Synonyms
     embed.add_field(
-                name= "Synonym",
-                value= info['title']['english'] or info['title']['native'] or info['title']['userPreferred'] or 'Unknown'
-    )
-    #Add Genre Field
-    embed.add_field(
-                name= 'Genre',
-                value=f"{(', ').join(info['genres'])}" or 'Unknown',
+                name= "Synonyms",
+                value= ('; '.join(info['synonyms']) or info['title']['userPreferred'] or '-'),
                 inline= False
     )
-
-    #Add Status, Start and Completed Date Field
+    #Genre
+    embed.add_field(
+                name= 'Genre',
+                value=(f"{(', ').join(info['genres'])}" or '-')+'\n\u200b',
+                inline= False
+    )
+    #-----------------
+    
+    #Status
     embed.add_field(
                 name= 'Status',
-                value= info['status'].title() or 'Unknown'
+                value= (info['status'].replace('_',' ').title() or '-')
     )
+    #Episodes
+    embed.add_field(
+                name= "Episodes",
+                value= info['episodes'] or (info['nextAiringEpisode']['episode']-1 if info['status'] != 'NOT_YET_RELEASED' else '-')
+    )
+    #Studio
+    embed.add_field(
+                name= 'Studio',
+                value= (info['studios']['nodes'][0]['name'].title() or '-')
+    )
+    #-----------------
 
-    if info['startDate']['year'] == None:
-        start_date = 'Unknown'
-    else:
+    #Season
+    embed.add_field(
+                name= "Season",
+                value= f"{info['season'].title()} {info['seasonYear']}" if info['season'] != None else '-'
+    )
+    #Start Date
+    if info['startDate']['day']:
         start_date= f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
+    else:
+        start_date = '-'
     embed.add_field(
                 name= 'Start Date',
                 value= start_date
     )
-
-    if info['endDate']['year'] == None:
-        end_date = 'Unknown'
-    else:
+    #End Date
+    if info['endDate']['day']:
         end_date= f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
+        
+    else:
+        end_date = '-'
     embed.add_field(
                 name= 'End Date',
                 value= end_date 
     )
+    #-----------------
 
-    embed.add_field(
-                name= "Episodes",
-                value= info['episodes'] or (info['nextAiringEpisode']['episode']-1 if info['status'] != 'NOT_YET_RELEASED' else 'Unknown')
-    )
-
+    #Score
     embed.add_field(
                 name= "Score",
-                value= info['averageScore'] or info['meanScore']or 'Unknown'
+                value= info['averageScore'] or info['meanScore'] or '-'
     )
-    rank = ''
+    #Popularity(Members)
+    embed.add_field(
+                name= "Members",
+                value= info['popularity'] or '-'
+    )
+    #Favourites
+    embed.add_field(
+                name= "Favourites",
+                value= info['favourites'] or '-'
+    )
+    #-----------------
+
+    #Ranking
+    rank = dict()
     for i in info['rankings']:
         if i['allTime']:
-            rank+= f"{i['type'].title()} #{i['rank']}\n"
-    embed.add_field(
-                name= "Ranking(All Time)",
-                value= rank or 'Unknown'
-    )
-    embed.add_field(
-                name= "Season",
-                value= info['season'].title() if info['season'] != None else 'Unknown'
-    )
-
-    #Add 
+            # rank+= f"{i['type'].title()} **#{i['rank']}**\n"
+            rank[i['type']] = i['rank']
+    #Ranking Rated
+    isThere=0
+    try:
+        embed.add_field(
+                    name= "Rating",
+                    value= (f"#{rank['RATED']}" if rank['RATED'] else '-')
+        )
+        isThere+=1
+    except:
+        pass
+    #Ranking Popular
+    
+    try:
+        embed.add_field(
+                    name= "Popularity",
+                    value= (f"#{rank['POPULAR']}" if rank['POPULAR'] else '-')
+        )
+        isThere+=1
+    except:
+        pass
+    
+    if isThere >1:
+        embed.add_field(
+                    name= "\u200b",
+                    value= "\u200b"
+        )
+    #-----------------
+    
+    #Add Footer 
     embed.set_footer(
                 text=f"Source: Anilist.co",
                 icon_url= f"https://anilist.co/img/icons/android-chrome-512x512.png"
     )
-
-
+    #Add Author 
     embed.set_author(
-                name=info['type'].title()
+                name=f"{info['type'].title()} ({info['format'].upper()})"
     )
-
-    embed.set_thumbnail(url=f"{info['coverImage']['large']}")
-
+    #Add Thumbnail
+    embed.set_thumbnail(
+                url=f"{info['coverImage']['large']}"
+        )
+    #Add Image
     if info['bannerImage'] != None:
-        embed.set_image(url=info['bannerImage'])
+        embed.set_image(
+                url=info['bannerImage']
+        )
 
     await ctx.send(embed=embed)
     
@@ -1052,18 +1115,18 @@ async def LogOut(ctx):
 
 
 ###Error Handling
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-#         pass
-#     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-#         await ctx.message.add_reaction('⏳')
-#     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-#         pass
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+        pass
+    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+        await ctx.message.add_reaction('⏳')
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        pass
 
 DISCORD_TOKEN = environ.get('DISCORD_TOKEN')
 
