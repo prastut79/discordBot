@@ -910,8 +910,11 @@ async def rndreddit(ctx, subred='memes',limit=100):
 
 #AnimeInfo Using ANILIST API
 @bot.command()
-async def animeinfo(ctx, anime_query):
-    info = anime.anime_info(anime_query)
+async def animeinfo(ctx, *anime_query):
+    info = anime.anime_info(' '.join(anime_query))
+    if not isinstance(info,dict):
+        await ctx.send(f"> {info}")
+        return
 
     embed=Embed(
                 title=info['title']['romaji'],

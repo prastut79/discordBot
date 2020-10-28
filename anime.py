@@ -28,9 +28,16 @@ def anime_info(request_query):
     response = requests.post(url, json={'query': query, 'variables': variables})
 
     search = json.loads(response.content)
-    print(search)
+ 
+    # animes = [x['title']['userPreferred'] for x in search['data']['Page']['media']]
+    # anime_ids = [x['id'] for x in search['data']['Page']['media']]
+    # anime_info = dict(zip(animes, anime_ids))
+    # anime_id = anime_info[get_close_matches(request_query, animes)[0]]
+    try:
+        anime_id = search['data']['Page']['media'][0]['id']
+    except IndexError:
+        return 'Anime Not Found.'
 
-    anime_id = search['data']['Page']['media'][0]['id']
         
 
 
@@ -86,14 +93,9 @@ def anime_info(request_query):
     variables = {
         'id': anime_id
     }
-    # Make the HTTP Api request
     response = requests.post(url, json={'query': query, 'variables': variables})
-
     info = json.loads(response.content)
-    # print(info)
+
     return info['data']['Media']
 
-# a= anime_info('boruto naruto next gen')
-# s= json.dumps(a, indent=2)
-# print(s)
-    
+
