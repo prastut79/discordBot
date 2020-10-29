@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from time import time
 from datetime import datetime
-
+import platform
 
 class BotStatus(commands.Cog):
     def __init__(self, bot):
@@ -36,7 +36,7 @@ class BotStatus(commands.Cog):
     @commands.is_owner()
     async def uptime(self, ctx):
         """
-        Check the Bot's Uptime
+        Check the Bot's Uptime.
         """
         with open('./config/time.txt','r') as f:
             a=f.readline()
@@ -49,6 +49,38 @@ class BotStatus(commands.Cog):
                         description=f'⌛ **UpTime:** {uptime}'
         )
         await ctx.send(embed=embed)
+    
+
+    @commands.command()
+    async def stats(self, ctx):
+        """
+        Displays bot's statistics.
+        """
+        pythonVersion = platform.python_version()
+        dpyVersion = discord.__version__
+        serverCount = len(self.bot.guilds)
+        memberCount = len(set(self.bot.get_all_members()))
+
+        embed = discord.Embed(
+                    title= f"{self.bot.user.name} Stats",
+                    description= '\uFEFF',
+                    colour= 0x53fff1
+        )
+
+        
+        embed.add_field(name='Guilds', value= f"`{serverCount}`")
+        embed.add_field(name='Users', value= f"`{memberCount}`")
+        embed.add_field(name='\uFEFF', value= '\uFEFF')
+        embed.add_field(name='Bot', value= f"`{self.bot.version}`")
+        embed.add_field(name='Python', value= f"`{pythonVersion}`")
+        embed.add_field(name='discord.py', value= f"`{dpyVersion}`")
+
+        embed.set_footer(
+                text= 'Developed By Netsos', 
+                icon_url= ''
+        )
+        embed.set_thumbnail(url= self.bot.user.avatar_url)
+        await ctx.send(embed=embed)
 
 
     @commands.command(name='Disconnect', aliases=['logout','close'])
@@ -58,7 +90,7 @@ class BotStatus(commands.Cog):
         Disconnect The Bot.
         """
         await ctx.message.add_reaction('☑')
-        await ctx.send(f'> Disconnected.')
+        await ctx.send(f'> :wave: Disconnected. ')
         await self.bot.close()
 
 def setup(bot):

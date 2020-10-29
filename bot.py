@@ -17,18 +17,33 @@ SERVER_PREFIX = tuple(SERVER_CONFIG['server_prefixs'])
 bot = commands.Bot(command_prefix= SERVER_PREFIX, case_insensitive=True, intents=intents)
 # bot.remove_command('help')
 
+with open('./config/server_config.json','r') as f:
+    bot.SERVER_CONFIG = json.load(f)
 
-#bot Start
-@bot.event
-async def on_ready():
-    await bot.change_presence(
-            status=discord.Status.idle, 
-            activity=discord.Activity(type=discord.ActivityType.watching, name="ANIMEEE")
-    )
-    print('Bot is Online. GTG')
-    with open('./config/time.txt','w') as f:
-        time=str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-        f.write(time)
+bot.colors = {
+  'WHITE': 0xFFFFFF,
+  'AQUA': 0x1ABC9C,
+  'GREEN': 0x2ECC71,
+  'BLUE': 0x3498DB,
+  'PURPLE': 0x9B59B6,
+  'LUMINOUS_VIVID_PINK': 0xE91E63,
+  'GOLD': 0xF1C40F,
+  'ORANGE': 0xE67E22,
+  'RED': 0xE74C3C,
+  'NAVY': 0x34495E,
+  'DARK_AQUA': 0x11806A,
+  'DARK_GREEN': 0x1F8B4C,
+  'DARK_BLUE': 0x206694,
+  'DARK_PURPLE': 0x71368A,
+  'DARK_VIVID_PINK': 0xAD1457,
+  'DARK_GOLD': 0xC27C0E,
+  'DARK_ORANGE': 0xA84300,
+  'DARK_RED': 0x992D22,
+  'DARK_NAVY': 0x2C3E50
+}
+bot.hex_colors = [c for c in bot.colors.values()]
+
+bot.version = '2.0'
 
 @bot.command()
 async def load(ctx, extension):
@@ -36,6 +51,7 @@ async def load(ctx, extension):
     Load an Extension.
     """
     bot.load_extension(f"cogs.{extension}")
+    ctx.send(f"> Sucessfully Loaded `{extension}`")
 
 @bot.command()
 async def unload(ctx, extension):
@@ -43,29 +59,15 @@ async def unload(ctx, extension):
     Unload an Extension.
     """
     bot.unload_extension(f"cogs.{extension}")
-
-for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
-        bot.load_extension(f"cogs.{filename[:-3]}")
+    ctx.send(f"> Sucessfully Unloaded `{extension}`")
 
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        pass
-    elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-        await ctx.message.add_reaction('⏳')
-    elif isinstance(error, discord.ext.commands.errors.MissingRole):
-        pass
-    elif isinstance(error, discord.ext.commands.NotOwner):
-        pass
 
-DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
-bot.run(DISCORD_TOKEN)
+if __name__ == "__main__":
+    for filename in os.listdir('./cogs'):
+        if filename.endswith('.py'):
+            bot.load_extension(f"cogs.{filename[:-3]}")
 
-#========================================================  
-#========================================================  
+    DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
+    bot.run(DISCORD_TOKEN)
+

@@ -6,10 +6,6 @@ from datetime import datetime
 import json
 
 class ServerJoin(commands.Cog):
-    with open('./config/server_config.json','r') as f:
-        SERVER_CONFIG = json.load(f)
-    hex_colors = [int(i,16) for i in SERVER_CONFIG['hex_colors']]
-
     def __init__(self, bot):
         self.bot = bot
         
@@ -19,7 +15,7 @@ class ServerJoin(commands.Cog):
         When Someone joins the Server.
         """
         #WELCOME MESSAGE------------------------------------------------------------
-        embed=discord.Embed(color=random.choice(self.hex_colors), 
+        embed=discord.Embed(color= random.choice(self.bot.hex_colors), 
                             description=f'{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
             )
         embed.set_thumbnail(url=f'{member.avatar_url}')
@@ -29,20 +25,20 @@ class ServerJoin(commands.Cog):
         
 
         #send welcome message
-        welcome_message_channel = member.guild.get_channel(self.SERVER_CONFIG['welcome_message_channel'])
+        welcome_message_channel = member.guild.get_channel(self.bot.SERVER_CONFIG['welcome_message_channel'])
         welcome_msg= await welcome_message_channel.send(embed=embed)
 
         
         #EDIT TOTAL MEMBER COUNT
-        member_count_channel = member.guild.get_channel(self.SERVER_CONFIG['member_count_channel'])
+        member_count_channel = member.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
         await member_count_channel.edit(name=f'🧑｜MEMBERS: {len(member.guild.members)}')
 
         #GIVE ROLE ON JOIN
         if member.bot:
-            role_bot = discord.utils.get(member.guild.roles, id= self.SERVER_CONFIG.get('role_bot_id'))
+            role_bot = discord.utils.get(member.guild.roles, id= self.bot.SERVER_CONFIG.get('role_bot_id'))
             await member.add_roles(role_bot)
         else:
-            role_to_give_on_join = self.SERVER_CONFIG['role_to_give_on_join']
+            role_to_give_on_join = self.bot.SERVER_CONFIG['role_to_give_on_join']
             for i in role_to_give_on_join:
                 role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
                 await member.add_roles(role_to_give_on_join)
@@ -67,7 +63,7 @@ Here is the Invitation Link to this Server:
                 gifs = f.readlines()
                 
             embed= discord.Embed(
-                color= random.choice(self.hex_colors),
+                color= random.choice(self.bot.hex_colors),
                 description=welcome_dm
                 )
             embed.set_image(url=random.choice(gifs))

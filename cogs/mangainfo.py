@@ -4,14 +4,14 @@ import json
 import requests
 import os
 
-def anime_info(request_query):
+def manga_info(request_query):
     url= 'https://graphql.anilist.co'
 
 # Search for the input anime name and get the id of the first result
     query = '''
     query ($query: String) {
     Page {
-        media(search: $query, type: ANIME) {
+        media(search: $query, type: MANGA) {
             id
             title {
                 userPreferred
@@ -29,9 +29,9 @@ def anime_info(request_query):
     search = json.loads(response.content)
 
     try:
-        anime_id = search['data']['Page']['media'][0]['id']
+        manga_id = search['data']['Page']['media'][0]['id']
     except IndexError:
-        return 'Anime Not Found.'
+        return 'Manga Not Found.'
 
 # Get the info of the anime from the ID 
     query="""
@@ -59,21 +59,16 @@ def anime_info(request_query):
         }
         status
         type
-        episodes
-        season
         synonyms
         format
-        seasonYear
+        chapters
         description
         averageScore
         meanScore
         genres
+        source
         popularity
         favourites
-        trailer {
-            id
-            site
-        }
         bannerImage
         rankings {
             rank
@@ -81,12 +76,13 @@ def anime_info(request_query):
             allTime
             context
         }
-        nextAiringEpisode {
-            episode
-        }
-        studios(isMain: true) {
-            nodes {
-                name	
+        staff(sort:FAVOURITES_DESC) {
+            edges {
+                node {
+                name {
+                    full
+                }
+                }
             }
         }
         siteUrl
@@ -94,28 +90,28 @@ def anime_info(request_query):
     }
     """
     variables = {
-        'id': anime_id
+        'id': manga_id
     }
     response = requests.post(url, json={'query': query, 'variables': variables})
     info = json.loads(response.content)
     
     return info['data']['Media']
 
-class AnimeInfo(commands.Cog):
+class MangaInfo(commands.Cog):
     with open('./config/server_config.json','r') as f:
         SERVER_CONFIG = json.load(f)
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name= 'AnimeInformation', aliases=['anime'])
+    @commands.command(name= 'MangaInformation', aliases=['manga'])
     @commands.has_role(SERVER_CONFIG['role_anime_id'])
     @commands.cooldown(1,5, commands.BucketType.user)
-    async def _anime(self, ctx, *anime_query):
+    async def _manga(self, ctx, *manga_query):
         """
-        Display Information about the specified Anime.
+        Display Information about the specified Manga.
         """
-        info = anime_info(' '.join(anime_query))
+        info = manga_info(' '.join(manga_query))
         if not isinstance(info,dict):
             await ctx.send(f"> {info}")
             return
@@ -154,25 +150,25 @@ class AnimeInfo(commands.Cog):
                     name= 'Status',
                     value= (info['status'].replace('_',' ').title() or '-')
         )
-        #Episodes
+        #Volumes
         embed.add_field(
-                    name= "Episodes",
-                    value= info['episodes'] or (info['nextAiringEpisode']['episode']-1 if info['status'] != 'NOT_YET_RELEASED' else '-')
+                    name= "Chapters",
+                    value= info['chapters'] or '-'
         )
-        #Studio
+        #Author
         try:
             embed.add_field(
-                        name='Studio',
-                        value= info['studios']['nodes'][0]['name'] or '-'
+                        name='Author',
+                        value= info['staff']['edges'][0]['node']['name']['full'] or '-'
             )
         except IndexError:
-            embed.add_field(name='Studio', value='-', inline=True)
+            embed.add_field(name='Author', value='-', inline=True)
         #-----------------
 
-        #Season
+        #Source
         embed.add_field(
-                    name= "Season",
-                    value= f"{info['season'].title()} {info['seasonYear']}" if info['season'] != None else '-'
+                    name= "Source",
+                    value= info['source'].title() or '-'
         )
         #Start Date
         if info['startDate']['day']:
@@ -252,8 +248,9 @@ class AnimeInfo(commands.Cog):
                     icon_url= f"https://anilist.co/img/icons/android-chrome-512x512.png"
         )
         #Add Author 
+        typ = (f"({info['format'].replace('_',' ').title()})") if not info['type'].lower() == info['format'].lower() else ""
         embed.set_author(
-                    name=f"{info['type'].title()} ({info['format'].upper()})"
+                    name=f"{info['type'].title()} " + typ
         )
         #Add Thumbnail
         embed.set_thumbnail(
@@ -269,4 +266,4 @@ class AnimeInfo(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(AnimeInfo(bot))
+    bot.add_cog(MangaInfo(bot))

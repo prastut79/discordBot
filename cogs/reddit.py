@@ -11,13 +11,13 @@ from datetime import datetime
 class Reddit(commands.Cog):
     with open('./config/server_config.json','r') as f:
         SERVER_CONFIG = json.load(f)
-    hex_colors = [int(i,16) for i in SERVER_CONFIG['hex_colors']]
-    print(hex_colors)
+
+    
     reddit = praw.Reddit(
-                client_id=SERVER_CONFIG['reddit_client_id'],
-                client_secret=environ.get('reddit_client_secret'),
-                username=SERVER_CONFIG['reddit_username'],
-                password=environ.get('reddit_password'),
+                client_id= SERVER_CONFIG['reddit_client_id'],
+                client_secret= environ.get('reddit_client_secret'),
+                username= SERVER_CONFIG['reddit_username'],
+                password= environ.get('reddit_password'),
                 user_agent= SERVER_CONFIG['reddit_user_agent']
     )
 
@@ -46,19 +46,19 @@ class Reddit(commands.Cog):
 
             if not str(rnd_post.url).endswith(image_formats):
                 dec_link = f'{rnd_post.selftext}\n\
-        {urls_post if not rnd_post.url== rnd_post_link else ""}\n\
-        `⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
-        [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+{urls_post if not rnd_post.url== rnd_post_link else ""}\n\
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
+[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
             else:
                 dec_link= f'{rnd_post.selftext}\n\n\
-        `⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
-        [r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
+`⬆ {rnd_post.ups}`  `⬇ {rnd_post.downs}`  `💬 {len(rnd_post.comments)}`   •   \
+[r/{str(rnd_post.subreddit)}](https://www.reddit.com/r/{rnd_post.subreddit})'
 
             embed = discord.Embed(
                 title= f'{rnd_post.title}',
                 url=rnd_post_link,
-                color=random.choice(self.hex_colors),
+                color= random.choice(self.bot.hex_colors),
                 description= dec_link
             )
 

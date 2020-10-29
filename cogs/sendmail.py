@@ -6,24 +6,22 @@ import asyncio
 from os import environ
 
 class SendMail(commands.Cog):
-    with open('./config/server_config.json','r') as f:
-        SERVER_CONFIG = json.load(f)
 
 
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name='SendEMail', aliases=['sendmail','smtp'])
+    @commands.command(name='SendEmail', aliases=['sendmail','smtp'])
     @commands.is_owner()
     async def sendmail(self, ctx):
         """
-        Send a E-Mail
+        Send an E-Mail.
         """
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
             smtp.ehlo()
             smtp.starttls()
             smtp.ehlo()
-            email = self.SERVER_CONFIG['gmail_email']
+            email = self.bot.SERVER_CONFIG['gmail_email']
             password = environ.get('KHAI_K_HO')
 
             def check(m):

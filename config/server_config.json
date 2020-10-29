@@ -20,13 +20,7 @@
     
     "gmail_email": "netsos798@gmail.com",
 
-    "image_formats": [".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif"],
-    
-    "hex_colors": [
-        "0x4B4CAD", "0xA2D7CC", "0x74AD4B", "0x000000", "0x52fff1", "0xFF51EB", "0xC481A7", "0xffadad", "0xe29578", "0xBD93BD",
-        "0x22223b", "0x9DBBAE", "0x188FA7", "0x8C5F66", "0xADBCA5", "0xE8B9AB", "0xCB769E", "0x72B01D", "0xF7717D", "0x925E78",
-        "0x7F2982", "0x16001E", "0x610345", "0x044B7F", "0xF05365", "0xA1CDF1", "0xC3A197", "0xDBE4EE", "0xdeaaff", "0x00296b",
-        "0xffffff", "0xed1111", "0xeba7a7"
-    ]
+    "image_formats": [".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif"]
+
 }   
 

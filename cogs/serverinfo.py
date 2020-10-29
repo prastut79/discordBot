@@ -16,7 +16,7 @@ class ServerInfo(commands.Cog):
         """
         if ctx.author.bot == False:
             embed = discord.Embed(title="Server Information",
-                            colour=ctx.guild.owner.colour
+                            colour= ctx.guild.owner.colour
             )
 
             embed.set_thumbnail(url=ctx.guild.icon_url)

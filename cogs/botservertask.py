@@ -3,7 +3,7 @@ from discord.ext import commands
 import asyncio
 
 
-class BotAction(commands.Cog):
+class BotServerTask(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -82,7 +82,7 @@ class BotAction(commands.Cog):
     @commands.is_owner()
     async def _copypaste(self, ctx, channel: discord.TextChannel, message: discord.Message):
         """
-        Copy And Paste a Specified Message in a Specified Channel
+        Copy And Paste a Specified Message in a Specified Channel.
         """
         await channel.send(content=message.content, embed=message.embeds[0])
     
@@ -91,7 +91,7 @@ class BotAction(commands.Cog):
     @commands.is_owner()
     async def _dm(self, ctx, user:discord.Member, *message):
         """
-        DM a User
+        DM a User.
         """
         message= ' '.join(list(message))
         await user.send(message)
@@ -107,7 +107,7 @@ class BotAction(commands.Cog):
 
     async def _clear(self, ctx, amount=1):
         """
-        Delete Messages
+        Delete Messages.
         """
         if ctx.author.bot == False:
             if amount<100:
@@ -158,6 +158,6 @@ class BotAction(commands.Cog):
         await ctx.send(f'```{a}```')
 
 def setup(bot):
-    bot.add_cog(BotAction(bot))
+    bot.add_cog(BotServerTask(bot))
 
     
