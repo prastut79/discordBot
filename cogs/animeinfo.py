@@ -136,7 +136,7 @@ class AnimeInfo(commands.Cog):
         )
 
         #Synonyms
-        synonym = info['synonyms'] or list(info['title']['userPreferred']) or ['-']
+        synonym = list(info['synonyms']) or list(info['title']['userPreferred']) or ['-']
         embed.add_field(
                     name= "Synonyms",
                     value= ('; '.join(synonym)),

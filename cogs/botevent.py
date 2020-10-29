@@ -27,7 +27,6 @@ class BotEvent(commands.Cog):
             pass
         elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
             await ctx.send(f'> Error\n> {error}')
-            print(dir(error))
         elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
             await ctx.message.add_reaction('⏳')
         elif isinstance(error, discord.ext.commands.errors.MissingRole):

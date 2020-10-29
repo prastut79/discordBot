@@ -131,10 +131,10 @@ class MangaInfo(commands.Cog):
         )
 
         #Synonyms
-        synonym = info['synonyms'] or list(info['title']['userPreferred']) or ['-']
+        synonyms = list(info['synonyms']) or list(info['title']['userPreferred']) or ['-']
         embed.add_field(
                     name= "Synonyms",
-                    value= ('; '.join(synonym)),
+                    value= ('; '.join(synonyms)),
                     inline= False
         )
         #Genre
