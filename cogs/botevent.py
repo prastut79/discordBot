@@ -17,22 +17,23 @@ class BotEvent(commands.Cog):
         with open('./config/time.txt','w') as f:
             time=str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
             f.write(time)
-    
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, ctx, error):
-    #     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-    #         await ctx.message.add_reaction('⏳')
-    #     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.NotOwner):
-    #         pass
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+            pass
+        elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+            pass
+        elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+            await ctx.send(f'> Error\n> {error}')
+            print(dir(error))
+        elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+            await ctx.message.add_reaction('⏳')
+        elif isinstance(error, discord.ext.commands.errors.MissingRole):
+            pass
+        elif isinstance(error, discord.ext.commands.NotOwner):
+            pass
 
 
 def setup(bot):

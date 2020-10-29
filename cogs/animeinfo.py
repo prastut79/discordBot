@@ -129,30 +129,33 @@ class AnimeInfo(commands.Cog):
             description= '-'+'\n\u200b'
 
         embed= discord.Embed(
-                        title=info['title']['romaji'],
-                        url= info['siteUrl'],
-                        description= description,
-                        color= ctx.author.color
+                    title= info['title']['romaji'] or info['title']['english'] or info,
+                    url= info['siteUrl'],
+                    description= description,
+                    color= ctx.author.color
         )
 
         #Synonyms
+        synonym = info['synonyms'] or list(info['title']['userPreferred']) or ['-']
         embed.add_field(
                     name= "Synonyms",
-                    value= ('; '.join(info['synonyms']) or info['title']['userPreferred'] or '-'),
+                    value= ('; '.join(synonym)),
                     inline= False
         )
         #Genre
+        genre = info['genres'] or ['-']
         embed.add_field(
                     name= 'Genre',
-                    value=(f"{(', ').join(info['genres'])}" or '-')+'\n\u200b',
+                    value=(', ').join(genre) +'\n\u200b',
                     inline= False
         )
         #-----------------
         
         #Status
+        status = info['status'] or '-'
         embed.add_field(
                     name= 'Status',
-                    value= (info['status'].replace('_',' ').title() or '-')
+                    value= (status.replace('_',' ').title())
         )
         #Episodes
         embed.add_field(

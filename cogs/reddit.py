@@ -24,7 +24,7 @@ class Reddit(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.command(name= 'Reddit', aliases=['rndreddit'], usage='rndreddit <subreddit> [limit=100]')
+    @commands.command(name= 'RedditPost', aliases=['reddit'], usage='rndreddit <subreddit> [limit=100]')
     @commands.cooldown(1,7,commands.BucketType.guild)
     async def randompostfromsubreddit(self, ctx, subred='memes',limit=100):
         """

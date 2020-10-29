@@ -10,16 +10,16 @@ class TimePass(commands.Cog):
     
 
     @commands.command(name='Choice', aliases=['choose','chs'])
-    @commands.cooldown(1,10, commands.BucketType.member)
+    @commands.cooldown(1,3, commands.BucketType.member)
     async def _choice(self, ctx, *args):
         """
         Choose between different items.
         """
         await ctx.send(f'> {random.choice(args)}')
 
-    @commands.command(name='RollNumber', aliases=['roll','rnd'])
-    @commands.cooldown(1,10, commands.BucketType.member)
-    async def _roll(self, ctx, a, b=0):
+    @commands.command(name='RollNumber', aliases=['roll'])
+    @commands.cooldown(1,3, commands.BucketType.member)
+    async def _roll(self, ctx, a=9, b=0):
         """
         Roll a random number between the specified interval.(Deafult 0-100)
         """
@@ -34,14 +34,14 @@ class TimePass(commands.Cog):
             pass
 
     @commands.command(name='RepeatUser', aliases=['say','repeat'])
-    @commands.cooldown(1,10, commands.BucketType.member)
+    @commands.cooldown(1,3, commands.BucketType.member)
     async def say(self, ctx, *message):
         """
         Repeat The User.
         """
         
         if ctx.author.bot == False:
-
+            
             if message[0][0] == '-':
                 
                 try:
