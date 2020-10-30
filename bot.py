@@ -3,6 +3,7 @@
 import os
 import json
 from datetime import datetime
+import praw
 
 import discord
 from discord.ext import commands
@@ -12,9 +13,15 @@ with open('./config/server_config.json','r') as f:
 
 intents = discord.Intents.all()
 
-SERVER_PREFIX = tuple(SERVER_CONFIG['server_prefixs'])
+SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 
-bot = commands.Bot(command_prefix= SERVER_PREFIX, case_insensitive=True, intents=intents)
+
+
+bot = commands.Bot(
+    command_prefix= commands.when_mentioned_or(SERVER_PREFIX, 'z!'), 
+    case_insensitive=True, 
+    intents=intents
+)
 # bot.remove_command('help')
 
 with open('./config/server_config.json','r') as f:
@@ -45,6 +52,15 @@ bot.hex_colors = [c for c in bot.colors.values()]
 
 bot.version = '2.0'
 
+reddit = praw.Reddit(
+                client_id= SERVER_CONFIG['reddit_client_id'],
+                client_secret= os.environ.get('reddit_client_secret'),
+                username= SERVER_CONFIG['reddit_username'],
+                password= os.environ.get('reddit_password'),
+                user_agent= SERVER_CONFIG['reddit_user_agent']
+)
+bot.reddit = reddit
+
 @bot.command()
 async def load(ctx, extension):
     """
@@ -60,7 +76,6 @@ async def unload(ctx, extension):
     """
     bot.unload_extension(f"cogs.{extension}")
     ctx.send(f"> Sucessfully Unloaded `{extension}`")
-
 
 
 if __name__ == "__main__":

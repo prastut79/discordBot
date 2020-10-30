@@ -18,6 +18,12 @@ class BotEvent(commands.Cog):
             time=str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
             f.write(time)
 
+    @commands.Cog.listener()
+    async def on_command(self, ctx):
+        if ctx.message.author == self.bot.user:
+            return
+        elif isinstance(ctx.message.channel, discord.channel.DMChannel):
+            return
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

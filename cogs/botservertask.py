@@ -14,8 +14,8 @@ class BotServerTask(commands.Cog):
         """
         Create a Invitaion Link for the Server.
         """
-        channel = ctx.guild.get_channel(756417893314461766)
-        inv_link = await channel.create_invite(max_age=0, max_uses=0, unique=False)
+
+        inv_link = await ctx.channel.create_invite(max_age=0, max_uses=0, unique=False)
 
         await ctx.author.send(f'Here is the Invitation link to This server\n{inv_link}')
         await ctx.message.add_reaction('📥')
@@ -104,7 +104,6 @@ class BotServerTask(commands.Cog):
 
     @commands.command(name='ClearMessages',  aliases=['clear','clearmsg','cls'])
     @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
-
     async def _clear(self, ctx, amount=1):
         """
         Delete Messages.
@@ -120,7 +119,7 @@ class BotServerTask(commands.Cog):
     @commands.has_any_role('乙乇尺回','ADMIN')
     async def _addreaction(self, ctx, channel, message, *args):
         """
-        Add reaction to a Message.
+        Add reactions to a Message.
         """
         channel = self.bot.get_channel(int(channel))
         message = await channel.fetch_message(int(message))

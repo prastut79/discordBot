@@ -268,10 +268,10 @@ class MangaInfo(commands.Cog):
 
         embed.add_field(
                 name= 'Main Characters',
-                value= ', '.join(characters),
+                value= sorted(', '.join(characters)),
                 inline= False
         )
-        
+
         #Add Footer 
         embed.set_footer(
                     text=f"Source: Anilist.co",

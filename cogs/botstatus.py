@@ -49,7 +49,17 @@ class BotStatus(commands.Cog):
                         description=f'⌛ **UpTime:** {uptime}'
         )
         await ctx.send(embed=embed)
-    
+
+    @commands.command(name= 'ServerPrefix', aliases=['prefix'])
+    async def _prefix(self, ctx):
+        """
+        Display the Bot's Prefix in the Server.
+        """
+        embed= discord.Embed(
+            description= f"My Prefix in this Server are  `a!`  and  `-`",
+            color= ctx.author.color
+        )
+        await ctx.send(embed= embed)
 
     @commands.command()
     async def stats(self, ctx):

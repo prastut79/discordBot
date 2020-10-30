@@ -1,26 +1,11 @@
 import discord
 from discord.ext import commands
-from os import environ
-import json
-import praw
 import random
 from datetime import datetime
 
 
 
 class Reddit(commands.Cog):
-    with open('./config/server_config.json','r') as f:
-        SERVER_CONFIG = json.load(f)
-
-    
-    reddit = praw.Reddit(
-                client_id= SERVER_CONFIG['reddit_client_id'],
-                client_secret= environ.get('reddit_client_secret'),
-                username= SERVER_CONFIG['reddit_username'],
-                password= environ.get('reddit_password'),
-                user_agent= SERVER_CONFIG['reddit_user_agent']
-    )
-
     def __init__(self, bot):
         self.bot = bot
         
@@ -33,9 +18,9 @@ class Reddit(commands.Cog):
 
         await ctx.channel.trigger_typing()
         
-        image_formats= tuple(self.SERVER_CONFIG['image_formats'])
+        image_formats= (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
         try:
-            subreddit = self.reddit.subreddit(subred)
+            subreddit = self.bot.reddit.subreddit(subred)
             top = subreddit.new(limit= limit)
 
             all_posts = [x for x in top if not x.stickied]

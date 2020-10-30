@@ -272,10 +272,10 @@ class AnimeInfo(commands.Cog):
 
         embed.add_field(
                 name= 'Main Characters',
-                value= ', '.join(characters),
+                value= sorted(', '.join(characters)),
                 inline= False
         )
-        
+
         #Add Footer 
         embed.set_footer(
                     text=f"Source: Anilist.co",
@@ -283,7 +283,7 @@ class AnimeInfo(commands.Cog):
         )
         #Add Author 
         embed.set_author(
-                    name=f"{info['type'].title()} ({info['format'].upper()})"
+                    name=f"{info['type'].title()} ({info['format'].replace('_',' ').upper()})"
         )
         #Add Thumbnail
         embed.set_thumbnail(
