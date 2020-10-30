@@ -33,57 +33,67 @@ def manga_info(request_query):
 # Get the info of the anime from the ID 
     query="""
     query ($id: Int!, $type: MediaType) {
-    Media(id: $id, type: $type) {
-        id
-        title {
-            romaji
-            english
-            native
-            userPreferred
-        }
-        startDate {
-            year
-            month
-            day
-        }
-        endDate {
-            year
-            month
-            day
-        }
-        coverImage {
-            large
-        }
-        status
-        type
-        synonyms
-        format
-        chapters
-        description
-        averageScore
-        meanScore
-        genres
-        source
-        popularity
-        favourites
-        bannerImage
-        rankings {
-            rank
+        Media(id: $id, type: $type) {
+            id
+            title {
+                romaji
+                english
+                native
+                userPreferred
+            }
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
+            coverImage {
+                large
+            }
+            status
             type
-            allTime
-            context
-        }
-        staff(sort:FAVOURITES_DESC) {
-            edges {
-                node {
-                name {
-                    full
+            synonyms
+            format
+            chapters
+            description
+            averageScore
+            meanScore
+            genres
+            source
+            popularity
+            favourites
+            bannerImage
+            rankings {
+                rank
+                type
+                allTime
+                context
+            }
+            staff(sort:FAVOURITES_DESC) {
+                edges {
+                    node {
+                    name {
+                        full
+                    }
+                    }
                 }
+            }
+            siteUrl
+            characters(sort: ROLE){ 
+                edges {
+                    node {
+                        name {
+                            full
+                        }
+                    }
+                    role
                 }
             }
         }
-        siteUrl
-    }
     }
     """
     variables = {
@@ -131,7 +141,7 @@ class MangaInfo(commands.Cog):
         )
 
         #Synonyms
-        synonyms = list(info['synonyms']) or list(info['title']['userPreferred']) or ['-']
+        synonyms = info['synonyms'] or [info['title']['english'] or info['title']['native'] or '-']
         embed.add_field(
                     name= "Synonyms",
                     value= ('; '.join(synonyms)),
@@ -244,6 +254,23 @@ class MangaInfo(commands.Cog):
                         value= "\u200b"
             )
         #-----------------
+
+        #MAIN CHARACTERS
+        characters = list()
+        if len(info['characters']['edges']) >1:
+            for i in info['characters']['edges']:
+                if i['role']=='MAIN':
+                    characters.append(i['node']['name']['full'])
+                else:
+                    break
+        else:
+            characters= ['-']
+
+        embed.add_field(
+                name= 'Main Characters',
+                value= ', '.join(characters),
+                inline= False
+        )
         
         #Add Footer 
         embed.set_footer(

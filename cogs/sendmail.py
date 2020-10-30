@@ -6,8 +6,6 @@ import asyncio
 from os import environ
 
 class SendMail(commands.Cog):
-
-
     def __init__(self, bot):
         self.bot = bot
     
@@ -93,10 +91,10 @@ class SendMail(commands.Cog):
                 
 
             except asyncio.TimeoutError:
-                await temp.edit(content='I\'m tired of waiting.')
+                await ctx.send(content='I\'m tired of waiting.')
 
             except smtplib.SMTPRecipientsRefused:
-                await status.edit(content='Invalid Email Address')
+                await ctx.send(content='Invalid Email Address')
             except:
                 await ctx.send('Errorrrrr')
 

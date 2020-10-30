@@ -36,61 +36,71 @@ def anime_info(request_query):
 # Get the info of the anime from the ID 
     query="""
     query ($id: Int!, $type: MediaType) {
-    Media(id: $id, type: $type) {
-        id
-        title {
-            romaji
-            english
-            native
-            userPreferred
-        }
-        startDate {
-            year
-            month
-            day
-        }
-        endDate {
-            year
-            month
-            day
-        }
-        coverImage {
-            large
-        }
-        status
-        type
-        episodes
-        season
-        synonyms
-        format
-        seasonYear
-        description
-        averageScore
-        meanScore
-        genres
-        popularity
-        favourites
-        trailer {
+        Media(id: $id, type: $type) {
             id
-            site
-        }
-        bannerImage
-        rankings {
-            rank
+            title {
+                romaji
+                english
+                native
+                userPreferred
+            }
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
+            coverImage {
+                large
+            }
+            status
             type
-            allTime
-            context
-        }
-        nextAiringEpisode {
-            episode
-        }
-        studios(isMain: true) {
-            nodes {
-                name	
+            episodes
+            season
+            synonyms
+            format
+            seasonYear
+            description
+            averageScore
+            meanScore
+            genres
+            popularity
+            favourites
+            trailer {
+                id
+                site
+            }
+            bannerImage
+            rankings {
+                rank
+                type
+                allTime
+                context
+            }
+            nextAiringEpisode {
+                episode
+            }
+            studios(isMain: true) {
+                nodes {
+                    name	
+                }
+            }
+            siteUrl
+            characters(sort: ROLE){ 
+                edges {
+                    node {
+                        name {
+                            full
+                        }
+                    }
+                    role
+                }
             }
         }
-        siteUrl
-    }
     }
     """
     variables = {
@@ -136,10 +146,10 @@ class AnimeInfo(commands.Cog):
         )
 
         #Synonyms
-        synonym = list(info['synonyms']) or list(info['title']['userPreferred']) or ['-']
+        synonyms = info['synonyms'] or [info['title']['english'] or info['title']['native'] or '-']
         embed.add_field(
                     name= "Synonyms",
-                    value= ('; '.join(synonym)),
+                    value= ('; '.join(synonyms)),
                     inline= False
         )
         #Genre
@@ -248,6 +258,23 @@ class AnimeInfo(commands.Cog):
                         value= "\u200b"
             )
         #-----------------
+
+        #MAIN CHARACTERS
+        characters = list()
+        if len(info['characters']['edges']) >1:
+            for i in info['characters']['edges']:
+                if i['role']=='MAIN':
+                    characters.append(i['node']['name']['full'])
+                else:
+                    break
+        else:
+            characters= ['-']
+
+        embed.add_field(
+                name= 'Main Characters',
+                value= ', '.join(characters),
+                inline= False
+        )
         
         #Add Footer 
         embed.set_footer(
