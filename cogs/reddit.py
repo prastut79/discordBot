@@ -18,7 +18,7 @@ class Reddit(commands.Cog):
 
         await ctx.channel.trigger_typing()
         
-        image_formats= (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
+        image_formats= (".png", ".jpg", ".jpeg", ".gif")
         try:
             subreddit = self.bot.reddit.subreddit(subred)
             top = subreddit.new(limit= limit)

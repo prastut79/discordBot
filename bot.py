@@ -16,7 +16,6 @@ intents = discord.Intents.all()
 SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 
 
-
 bot = commands.Bot(
     command_prefix= commands.when_mentioned_or(SERVER_PREFIX, 'z!'), 
     case_insensitive=True, 
@@ -67,7 +66,7 @@ async def load(ctx, extension):
     Load an Extension.
     """
     bot.load_extension(f"cogs.{extension}")
-    ctx.send(f"> Sucessfully Loaded `{extension}`")
+    await ctx.send(f"> Sucessfully Loaded `{extension}`.")
 
 @bot.command()
 async def unload(ctx, extension):
@@ -75,7 +74,17 @@ async def unload(ctx, extension):
     Unload an Extension.
     """
     bot.unload_extension(f"cogs.{extension}")
-    ctx.send(f"> Sucessfully Unloaded `{extension}`")
+    await ctx.send(f"> Sucessfully Unloaded `{extension}`.")
+
+
+@bot.command()
+async def reload(ctx, extension):
+    """
+    Reload an Extension.
+    """
+    bot.unload_extension(f"cogs.{extension}")
+    bot.load_extension(f"cogs.{extension}")
+    await ctx.send(f"> Sucessfully Reloaded `{extension}`.")
 
 
 if __name__ == "__main__":

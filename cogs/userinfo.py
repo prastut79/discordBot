@@ -33,7 +33,7 @@ class UserInfo(commands.Cog):
                         
                         ("Status", str(target.status).title(), True),
                         ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
-                        ("Joined at", target.joined_at.strftime("%b %d, %Y "), False)
+                        ("Joined on", target.joined_at.strftime("%b %d, %Y "), False)
             ]
                         
             for name, value, inline in fields:

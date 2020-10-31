@@ -56,7 +56,7 @@ class BotStatus(commands.Cog):
         Display the Bot's Prefix in the Server.
         """
         embed= discord.Embed(
-            description= f"My Prefix in this Server are  `a!`  and  `-`",
+            description= f"My Prefix in this Server are  `z!`  and  `-`",
             color= ctx.author.color
         )
         await ctx.send(embed= embed)

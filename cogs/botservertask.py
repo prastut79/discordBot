@@ -8,7 +8,7 @@ class BotServerTask(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(name="Invitaion",aliases=['cinv','invitationlink'])
+    @commands.command(name="InvitaionLink",aliases=['cinvite'])
     @commands.cooldown(1,60, commands.BucketType.member)
     async def inv(self, ctx):
         """
@@ -102,8 +102,8 @@ class BotServerTask(commands.Cog):
         if isinstance(error, commands.errors.BadArgument):
             await ctx.send(f'{ctx.author.mention}\nMember not Found.')
 
-    @commands.command(name='ClearMessages',  aliases=['clear','clearmsg','cls'])
-    @commands.has_any_role('乙乇尺回','MOD','ADMIN','GUYZ')
+    @commands.command(name='ClearMessage',  aliases=['cls'])
+    @commands.has_permissions(manage_messages=True)
     async def _clear(self, ctx, amount=1):
         """
         Delete Messages.

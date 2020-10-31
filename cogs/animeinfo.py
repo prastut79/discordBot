@@ -272,7 +272,7 @@ class AnimeInfo(commands.Cog):
 
         embed.add_field(
                 name= 'Main Characters',
-                value= sorted(', '.join(characters)),
+                value= (', '.join(sorted(characters))),
                 inline= False
         )
 
