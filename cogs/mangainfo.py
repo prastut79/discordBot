@@ -144,7 +144,7 @@ class MangaInfo(commands.Cog):
         synonyms = info['synonyms'] or [info['title']['english'] or info['title']['native'] or '-']
         embed.add_field(
                     name= "Synonyms",
-                    value= ('; '.join(synonyms)),
+                    value= ('｜'.join(synonyms)),
                     inline= False
         )
         #Genre

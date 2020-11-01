@@ -2,8 +2,9 @@
 #whitespace = \u200b 
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import praw
+
 
 import discord
 from discord.ext import commands
@@ -15,6 +16,9 @@ intents = discord.Intents.all()
 
 SERVER_PREFIX = SERVER_CONFIG['server_prefix']
 
+# def get_prefix(bot, message):
+#     id = message.guild.id
+#     return commands.when_mentioned_or()
 
 bot = commands.Bot(
     command_prefix= commands.when_mentioned_or(SERVER_PREFIX, 'z!'), 

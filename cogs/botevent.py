@@ -20,7 +20,6 @@ class BotEvent(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command(self, ctx):
-
         if ctx.message.author == self.bot.user:
             return
         elif isinstance(ctx.message.channel, discord.channel.DMChannel):
