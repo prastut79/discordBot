@@ -81,7 +81,6 @@ class BotStatus(commands.Cog):
         description = \
 f"""\
 {self.bot.user.name} is a Multi-Purpose bot for your Discord Server.
-Use {ctx.}
 """
         embed = discord.Embed(
                     title= f"{self.bot.user.name} Stats",
