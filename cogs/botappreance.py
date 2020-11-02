@@ -43,7 +43,7 @@ class BotAppreance(commands.Cog):
                 activity=discord.Activity(type=discord.ActivityType.watching, name=name)
         )
         await ctx.message.add_reaction('☑')
-
+    
     @commands.command(name= 'Listening', aliases=['zlistening'])
     @commands.is_owner()
     async def _zlistening(self, ctx, *name):

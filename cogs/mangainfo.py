@@ -4,11 +4,12 @@ import json
 import requests
 import os
 
-def manga_info(request_query):
-    url= 'https://graphql.anilist.co'
 
-# Search for the input anime name and get the id of the first result
-    query = '''
+def manga_info(request_query):
+    url = "https://graphql.anilist.co"
+
+    # Search for the input anime name and get the id of the first result
+    query = """
     query ($query: String) {
     Page {
         media(search: $query, type: MANGA) {
@@ -16,25 +17,24 @@ def manga_info(request_query):
         }
     }
     }
-    '''
+    """
 
-    variables = {
-        'query': request_query
-    }
-    response = requests.post(url, json={'query': query, 'variables': variables})
+    variables = {"query": request_query}
+    response = requests.post(url, json={"query": query, "variables": variables})
 
     search = json.loads(response.content)
 
     try:
-        manga_id = search['data']['Page']['media'][0]['id']
+        manga_id = search["data"]["Page"]["media"][0]["id"]
     except IndexError:
-        return 'Manga Not Found.'
+        return "Manga Not Found."
 
-# Get the info of the anime from the ID 
-    query="""
+    # Get the info of the anime from the ID
+    query = """
     query ($id: Int!, $type: MediaType) {
         Media(id: $id, type: $type) {
             id
+            idMal
             title {
                 romaji
                 english
@@ -52,7 +52,7 @@ def manga_info(request_query):
                 day
             }
             coverImage {
-                large
+                extraLarge
             }
             status
             type
@@ -96,201 +96,168 @@ def manga_info(request_query):
         }
     }
     """
-    variables = {
-        'id': manga_id
-    }
-    response = requests.post(url, json={'query': query, 'variables': variables})
+    variables = {"id": manga_id}
+    response = requests.post(url, json={"query": query, "variables": variables})
     info = json.loads(response.content)
-    
-    return info['data']['Media']
+
+    return info["data"]["Media"]
+
 
 class MangaInfo(commands.Cog):
-    with open('./config/server_config.json','r') as f:
+    with open("./config/server_config.json", "r") as f:
         SERVER_CONFIG = json.load(f)
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name= 'MangaInformation', aliases=['manga'])
-    @commands.has_role(SERVER_CONFIG['role_anime_id'])
-    @commands.cooldown(1,5, commands.BucketType.user)
+    @commands.command(name="MangaInformation", aliases=["manga"])
+    @commands.has_role(SERVER_CONFIG["role_anime_id"])
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def _manga(self, ctx, *manga_query):
         """
         Display Information about the specified Manga.
         """
 
-        info = manga_info(' '.join(manga_query))
+        info = manga_info(" ".join(manga_query))
 
-        if not isinstance(info,dict):
+        if not isinstance(info, dict):
             await ctx.send(f"> {info}")
             return
 
-        if info['description']:
+        if info["description"]:
             """Remove html tags"""
             import re
-            clean = re.compile('<.*?>')
-            description= re.sub(clean, '', info['description'])+'\n\u200b'
+
+            clean = re.compile("<.*?>")
+            description = re.sub(clean, "", info["description"]) + "\n\u200b"
         else:
-            description= '-'+'\n\u200b'
+            description = "-" + "\n\u200b"
 
-        embed= discord.Embed(
-                        title= info['title']['romaji'] or info['title']['english'] or info,
-                        url= info['siteUrl'],
-                        description= description,
-                        color= ctx.author.color
+        embed = discord.Embed(
+            title=info["title"]["romaji"] or info["title"]["english"] or info,
+            url=info["siteUrl"],
+            description=description,
+            color=ctx.author.color,
         )
 
-        #Synonyms
-        synonyms = info['synonyms'] or [info['title']['english'] or info['title']['native'] or '-']
+        # Synonyms
+        synonyms = info["synonyms"] or [
+            info["title"]["english"] or info["title"]["native"] or "-"
+        ]
+        embed.add_field(name="Synonyms", value=("｜".join(synonyms)), inline=False)
+        # Genre
+        genre = info["genres"] or ["-"]
         embed.add_field(
-                    name= "Synonyms",
-                    value= ('｜'.join(synonyms)),
-                    inline= False
+            name="Genre", value=(", ").join(genre) + "\n\u200b", inline=False
         )
-        #Genre
-        genre = info['genres'] or ['-']
-        embed.add_field(
-                    name= 'Genre',
-                    value=(', ').join(genre) +'\n\u200b',
-                    inline= False
-        )
-        #-----------------
-        
-        #Status
-        status = info['status'] or '-'
-        embed.add_field(
-                    name= 'Status',
-                    value= (status.replace('_',' ').title())
-        )
-        #Volumes
-        embed.add_field(
-                    name= "Chapters",
-                    value= info['chapters'] or '-'
-        )
-        #Author
+        # -----------------
+
+        # Status
+        status = info["status"] or "-"
+        embed.add_field(name="Status", value=(status.replace("_", " ").title()))
+        # Volumes
+        embed.add_field(name="Chapters", value=info["chapters"] or "-")
+        # Author
         try:
             embed.add_field(
-                        name='Author',
-                        value= info['staff']['edges'][0]['node']['name']['full'] or '-'
+                name="Author",
+                value=info["staff"]["edges"][0]["node"]["name"]["full"] or "-",
             )
         except IndexError:
-            embed.add_field(name='Author', value='-', inline=True)
-        #-----------------
+            embed.add_field(name="Author", value="-", inline=True)
+        # -----------------
 
-        #Source
-        source = info['source'] or '-'
-        embed.add_field(
-                    name= "Source",
-                    value= source.title()
-        )
-        #Start Date
-        if info['startDate']['day']:
-            start_date= f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
+        # Source
+        source = info["source"] or "-"
+        embed.add_field(name="Source", value=source.title())
+        # Start Date
+        if info["startDate"]["day"]:
+            start_date = f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
         else:
-            start_date = '-'
-        embed.add_field(
-                    name= 'Premire Date',
-                    value= start_date
-        )
-        #End Date
-        if info['endDate']['day']:
-            end_date= f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
-            
+            start_date = "-"
+        embed.add_field(name="Premire Date", value=start_date)
+        # End Date
+        if info["endDate"]["day"]:
+            end_date = f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
+
         else:
-            end_date = '-'
-        embed.add_field(
-                    name= 'End Date',
-                    value= end_date 
-        )
-        #-----------------
+            end_date = "-"
+        embed.add_field(name="End Date", value=end_date)
+        # -----------------
 
-        #Score
+        # Score
         embed.add_field(
-                    name= "Score",
-                    value= info['averageScore'] or info['meanScore'] or '-'
+            name="Score", value=info["averageScore"] or info["meanScore"] or "-"
         )
-        #Popularity(Members)
-        embed.add_field(
-                    name= "Members",
-                    value= info['popularity'] or '-'
-        )
-        #Favourites
-        embed.add_field(
-                    name= "Favourites",
-                    value= info['favourites'] or '-'
-        )
-        #-----------------
+        # Popularity(Members)
+        embed.add_field(name="Members", value=info["popularity"] or "-")
 
-        #Ranking
+        # Favourites
+        embed.add_field(name="Favourites", value=info["favourites"] or "-")
+        # -----------------
+
+        # Ranking
         rank = dict()
-        for i in info['rankings']:
-            if i['allTime']:
-                rank[i['type']] = i['rank']
-                
-        #Ranking Rated
-        isThere=0
+        for i in info["rankings"]:
+            if i["allTime"]:
+                rank[i["type"]] = i["rank"]
+
+        # Ranking Rated
+        isThere = 0
         try:
             embed.add_field(
-                        name= "Rating",
-                        value= (f"#{rank['RATED']}" if rank['RATED'] else '-')
+                name="Rating", value=(f"#{rank['RATED']}" if rank["RATED"] else "-")
             )
-            isThere+=1
+            isThere += 1
         except:
             pass
 
-        #Ranking Popular
+        # Ranking Popular
         try:
             embed.add_field(
-                        name= "Popularity",
-                        value= (f"#{rank['POPULAR']}" if rank['POPULAR'] else '-')
+                name="Popularity",
+                value=(f"#{rank['POPULAR']}" if rank["POPULAR"] else "-"),
             )
-            isThere+=1
+            isThere += 1
         except:
             pass
-        
-        if isThere >1:
-            embed.add_field(
-                        name= "\u200b",
-                        value= "\u200b"
-            )
-        #-----------------
 
-        #MAIN CHARACTERS
+        if isThere > 1:
+            embed.add_field(name="\u200b", value="\u200b")
+        # -----------------
+
+        # MAIN CHARACTERS
         characters = list()
-        if len(info['characters']['edges']) >1:
-            for i in info['characters']['edges']:
-                if i['role']=='MAIN':
-                    characters.append(i['node']['name']['full'])
+        if len(info["characters"]["edges"]) > 1:
+            for i in info["characters"]["edges"]:
+                if i["role"] == "MAIN":
+                    characters.append(i["node"]["name"]["full"])
                 else:
                     break
         else:
-            characters= ['-']
+            characters = ["-"]
 
         embed.add_field(
-                name= 'Main Characters',
-                value= (', '.join(sorted(characters))),
-                inline= False
+            name="Main Characters", value=(", ".join(characters)), inline=False
         )
 
-        #Add Footer 
+        # Add Footer
         embed.set_footer(
-                    text=f"Source: Anilist.co",
-                    icon_url= f"https://anilist.co/img/icons/android-chrome-512x512.png"
+            text=f"Source: Anilist.co",
+            icon_url=f"https://anilist.co/img/icons/android-chrome-512x512.png",
         )
-        #Add Author 
-        typ = (f"({info['format'].replace('_',' ').title()})") if not info['type'].lower() == info['format'].lower() else ""
-        embed.set_author(
-                    name=f"{info['type'].title()} " + typ
+        # Add Author
+        typ = (
+            (f"({info['format'].replace('_',' ').title()})")
+            if not info["type"].lower() == info["format"].lower()
+            else ""
         )
-        #Add Thumbnail
-        embed.set_thumbnail(
-                    url=f"{info['coverImage']['large']}"
-            )
-        #Add Image
-        if info['bannerImage']:
-            embed.set_image(
-                    url=info['bannerImage']
-            )
+        embed.set_author(name=f"{info['type'].title()} " + typ)
+        # Add Thumbnail
+        embed.set_thumbnail(url=f"{info['coverImage']['extraLarge']}")
+        # Add Image
+        if info["bannerImage"]:
+            embed.set_image(url=info["bannerImage"])
 
         await ctx.send(embed=embed)
 

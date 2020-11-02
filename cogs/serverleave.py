@@ -15,7 +15,7 @@ class ServerLeave(commands.Cog):
         When Someone leaves or are kicked from the Server.
         """
         embed= discord.Embed(
-                        color=random.choice(random.choice(self.bot.hex_colors)), 
+                        color=random.choice(self.bot.hex_colors), 
                         description=f'**{member.name}** has left the server.\nGoodBye:wave:'
             )
         embed.set_thumbnail(url=f'{member.avatar_url}')

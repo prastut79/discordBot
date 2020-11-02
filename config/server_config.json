@@ -2,23 +2,16 @@
     "bot_id": 756816513037762581,
     "bot_owner_id": 483179796323631115,
     "server_prefix": "-",
-
-
     "member_count_channel": 757225313943027772,
     "welcome_message_channel": 756417893314461766,
     "goodbye_message_channel": 756452827395784775,
-
     "role_to_give_on_join": [
         756428207200403477
     ],
     "role_bot_id": 756429809759813683,
     "role_anime_id": 765250041249529867,
-    
     "reddit_client_id": "5FnNRh6CVAXA9g",
     "reddit_username": "netsos798",
     "reddit_user_agent": "discord_bot",
-    
     "gmail_email": "netsos798@gmail.com"
-
-}   
-
+}
