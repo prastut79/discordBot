@@ -4,7 +4,7 @@ from discord.ext import commands
 import json
 import requests
 import os
-import AnilistAPI.anilist
+
 
 def anime_info(request_query):
     url = "https://graphql.anilist.co"
