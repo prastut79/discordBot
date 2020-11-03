@@ -25,9 +25,6 @@ best result and then finally call
 the respective method of Anilist Class
 imported from anilist.
 
-The class raises IllegalArgumentError
-if the query does not have any match
-in the Anilist Database.
 
 Netsos
 """
@@ -36,11 +33,7 @@ import requests
 import json
 
 from . import anilist
-
-
-class IllegalArgumentError(ValueError):
-    def __init__(self, name: str):
-        super().__init__(f"{name} not Found.")
+from . import errors
 
 
 class AnilistSearch(anilist.Anilist):
@@ -54,7 +47,6 @@ class AnilistSearch(anilist.Anilist):
         """
         id = None
         if isinstance(search, str):
-
             query = """
             query ($query: String) {
                 Page {
@@ -72,16 +64,16 @@ class AnilistSearch(anilist.Anilist):
             info = json.loads(response.text)
 
             if len(info["data"]["Page"]["media"]) == 0:
-                raise IllegalArgumentError("Anime")
+                raise errors.ContentNotFoundError("Anime")
             else:
                 id = info["data"]["Page"]["media"][0]["id"]
 
         elif isinstance(search, int):
             id = search
         else:
-            raise TypeError('Invalid Argument.')
+            raise TypeError("Invalid Argument.")
 
-        return super().series(id)
+        return super().anime(id)
 
     def manga_search(self, search):
         """
@@ -108,16 +100,16 @@ class AnilistSearch(anilist.Anilist):
             info = json.loads(response.text)
 
             if len(info["data"]["Page"]["media"]) == 0:
-                raise IllegalArgumentError("Manga")
+                raise errors.ContentNotFoundError("Manga")
             else:
                 id = info["data"]["Page"]["media"][0]["id"]
 
         elif isinstance(search, int):
             id = search
         else:
-            raise TypeError('Invalid Argument.')
+            raise TypeError("Invalid Argument.")
 
-        return super().series(id)
+        return super().manga(id)
 
     def character_search(self, search):
         """
@@ -144,15 +136,15 @@ class AnilistSearch(anilist.Anilist):
             info = json.loads(response.text)
 
             if len(info["data"]["Page"]["characters"]) == 0:
-                raise IllegalArgumentError("Character")
+                raise errors.ContentNotFoundError("Character")
             else:
                 id = info["data"]["Page"]["characters"][0]["id"]
 
         elif isinstance(search, int):
             id = search
         else:
-            raise TypeError('Invalid Argument.')
-        
+            raise TypeError("Invalid Argument.")
+
         return super().character(id)
 
     def staff_search(self, search):
@@ -180,14 +172,14 @@ class AnilistSearch(anilist.Anilist):
             info = json.loads(response.text)
 
             if len(info["data"]["Page"]["studios"]) == 0:
-                raise IllegalArgumentError("Staff")
+                raise errors.ContentNotFoundError("Staff")
             else:
                 id = info["data"]["Page"]["staff"][0]["id"]
 
         elif isinstance(search, int):
             id = search
         else:
-            raise TypeError('Invalid Argument.')
+            raise TypeError("Invalid Argument.")
 
         return super().staff(id)
 
@@ -215,18 +207,13 @@ class AnilistSearch(anilist.Anilist):
             info = json.loads(response.text)
 
             if len(info["data"]["Page"]["studios"]) == 0:
-                raise IllegalArgumentError("Studio")
+                raise errors.ContentNotFoundError("Studio")
             else:
-                id = info["data"]["Page"]["studios"][0]['id']
+                id = info["data"]["Page"]["studios"][0]["id"]
 
         elif isinstance(search, int):
             id = search
         else:
-            raise TypeError('Invalid Argument.')
+            raise TypeError("Invalid Argument.")
 
         return super().studio(id)
-
-
-# a = AnilistSearch()
-# inf = json.dumps(a.studio('mappa'), indent=2)
-# print(inf)

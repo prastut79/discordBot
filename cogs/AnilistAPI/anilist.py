@@ -10,9 +10,6 @@ A Class that uses the  Anilist API(v2 GraphQL) to get information on:
 4. Staff
 5. Studio
 
-Raises IllegalArgumentError if the provided ID does not have any
-matches in te Anilist Database.
-
 *Unique ID of each of the above Attributes is Required.
 
 Netsos
@@ -22,41 +19,59 @@ Netsos
 import requests
 import json
 import re
-from . import query
-# import query
 
-class IllegalArgumentError(ValueError):
-    def __init__(self):
-        super().__init__("No such ID exists in Anilist Database.")
+from . import query
+from . import errors
 
 
 class Anilist:
     def __init__(self):
         self.url = "https://graphql.anilist.co"
 
-    def series(self, id: int):
+    def anime(self, id: int):
         """
-        This Method takes ID of an Series in the Parameter.
+        This Method takes ID of an Anime in the Parameter.
 
         Returns the Series Information based on the Provided ID as a Dictionary.
         """
         variables = {"id": id}
 
         response = requests.post(
-            self.url, json={"query": query.series_query, "variables": variables}
+            self.url, json={"query": query.anime_query, "variables": variables}
         )
-        if response.status_code == 404:
-            raise IllegalArgumentError
+
+        if response.status_code == 404 or response.status_code == 400:
+            raise errors.IDNotFoundError("Anime")
 
         # Clearing out the HTML tags
         clean = re.compile("<.*?>")
         response = re.sub(clean, "", response.text)
 
         info = json.loads(response)
-        
-        if info is None:
-            raise IllegalArgumentError
-        
+
+        return info["data"]["Media"]
+
+    def manga(self, id: int):
+        """
+        This Method takes ID of a Manga in the Parameter.
+
+        Returns the Series Information based on the Provided ID as a Dictionary.
+        """
+        variables = {"id": id}
+
+        response = requests.post(
+            self.url, json={"query": query.manga_query, "variables": variables}
+        )
+
+        if response.status_code == 404 or response.status_code == 400:
+            raise errors.IDNotFoundError("Manga")
+
+        # Clearing out the HTML tags
+        clean = re.compile("<.*?>")
+        response = re.sub(clean, "", response.text)
+
+        info = json.loads(response)
+
         return info["data"]["Media"]
 
     def character(self, id: int):
@@ -70,17 +85,14 @@ class Anilist:
         response = requests.post(
             self.url, json={"query": query.character_query, "variables": variables}
         )
-        if response.status_code == 404:
-            raise IllegalArgumentError
+        if response.status_code == 404 or response.status_code == 400:
+            raise errors.IDNotFoundError("Character")
 
         # Clearing out the HTML tags
         clean = re.compile("<.*?>")
         response = re.sub(clean, "", response.text)
 
         info = json.loads(response)
-
-        if info is None:
-            raise IllegalArgumentError
 
         return info["data"]["Character"]
 
@@ -95,8 +107,8 @@ class Anilist:
         response = requests.post(
             self.url, json={"query": query.staff_query, "variables": variables}
         )
-        if response.status_code == 404:
-            raise IllegalArgumentError
+        if response.status_code == 404 or response.status_code == 400:
+            raise errors.IDNotFoundError("Staff")
 
         # Clearing out the HTML tags
         clean = re.compile("<.*?>")
@@ -117,8 +129,8 @@ class Anilist:
         response = requests.post(
             self.url, json={"query": query.studio_query, "variables": variables}
         )
-        if response.status_code == 404:
-            raise IllegalArgumentError
+        if response.status_code == 404 or response.status_code == 400:
+            raise errors.IDNotFoundError("Studio")
 
         # Clearing out the HTML tags
         clean = re.compile("<.*?>")
@@ -127,13 +139,3 @@ class Anilist:
         info = json.loads(response)
 
         return info["data"]["Studio"]
-
-
-
-# obj = Anilist()
-
-# a=obj.series(105333)
-# # # a=obj.staff(95185)
-# # # a=obj.studio(79)
-# a=json.dumps(a, indent=2)
-# print(a)

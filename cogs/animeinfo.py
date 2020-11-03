@@ -5,7 +5,7 @@ import json
 import requests
 import os
 
-from .AnilistAPI import search
+from .AnilistAPI import search, errors
 
 
 class AnimeInfo(commands.Cog, search.AnilistSearch):
@@ -23,17 +23,27 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         """
         Display Information about the specified Anime.
         """
-        info = super().anime_search(" ".join(anime_query))
+        anime_query = " ".join(anime_query)
+        try:
+            anime_query = int(anime_query)
+        except:
+            pass
+
+        try:
+            info = super().anime_search(anime_query)
+        except errors.ContentNotFoundError:
+            await ctx.send("> Anime Not Found.")
+            return
+        except errors.IDNotFoundError:
+            await ctx.send("> Anime ID Not Found.")
+            return
+
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")
             return
 
         if info["description"]:
-            """Remove html tags"""
-            import re
-
-            clean = re.compile("<.*?>")
-            description = re.sub(clean, "", info["description"]) + "\n\u200b"
+            description = info["description"] + "\n\u200b"
         else:
             description = "-" + "\n\u200b"
 
@@ -59,6 +69,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         # Status
         status = info["status"] or "-"
         embed.add_field(name="Status", value=(status.replace("_", " ").title()))
+
         # Episodes
         embed.add_field(
             name="Episodes",
@@ -175,4 +186,3 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
 
 def setup(bot):
     bot.add_cog(AnimeInfo(bot))
- 
