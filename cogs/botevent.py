@@ -31,7 +31,7 @@ class BotEvent(commands.Cog):
         if isinstance(error, discord.ext.commands.errors.CommandNotFound):
             pass
         elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-            pass
+            await ctx.send(f'> Error\n> {error}')
         elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
             await ctx.send(f'> Error\n> {error}')
         elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):

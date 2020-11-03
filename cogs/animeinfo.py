@@ -5,118 +5,16 @@ import json
 import requests
 import os
 
-
-def anime_info(request_query):
-    url = "https://graphql.anilist.co"
-
-    # Search for the input anime name and get the id of the first result
-    query = """
-    query ($query: String) {
-    Page {
-        media(search: $query, type: ANIME) {
-            id
-            title {
-                userPreferred
-            }
-        }
-    }
-    }
-    """
-
-    variables = {"query": request_query}
-    response = requests.post(url, json={"query": query, "variables": variables})
-
-    search = json.loads(response.content)
-
-    try:
-        anime_id = search["data"]["Page"]["media"][0]["id"]
-    except IndexError:
-        return "Anime Not Found."
-
-    # Get the info of the anime from the ID
-    query = """
-    query ($id: Int!, $type: MediaType) {
-        Media(id: $id, type: $type) {
-            id
-            idMal
-            title {
-                romaji
-                english
-                native
-                userPreferred
-            }
-            startDate {
-                year
-                month
-                day
-            }
-            endDate {
-                year
-                month
-                day
-            }
-            coverImage {
-                extraLarge
-            }
-            status
-            type
-            episodes
-            season
-            synonyms
-            format
-            seasonYear
-            description
-            averageScore
-            meanScore
-            genres
-            popularity
-            favourites
-            trailer {
-                id
-                site
-            }
-            bannerImage
-            rankings {
-                rank
-                type
-                allTime
-                context
-            }
-            nextAiringEpisode {
-                episode
-            }
-            studios(isMain: true) {
-                nodes {
-                    name	
-                }
-            }
-            siteUrl
-            characters(sort: ROLE){ 
-                edges {
-                    node {
-                        name {
-                            full
-                        }
-                    }
-                    role
-                }
-            }
-        }
-    }
-    """
-    variables = {"id": anime_id}
-    response = requests.post(url, json={"query": query, "variables": variables})
-    info = json.loads(response.content)
-
-    return info["data"]["Media"]
+from .AnilistAPI import search
 
 
-class AnimeInfo(commands.Cog):
+class AnimeInfo(commands.Cog, search.AnilistSearch):
     with open("./config/server_config.json", "r") as f:
         SERVER_CONFIG = json.load(f)
 
     def __init__(self, bot):
         self.bot = bot
+        self.url = "https://graphql.anilist.co"
 
     @commands.command(name="AnimeInformation", aliases=["anime"])
     @commands.has_role(SERVER_CONFIG["role_anime_id"])
@@ -125,7 +23,7 @@ class AnimeInfo(commands.Cog):
         """
         Display Information about the specified Anime.
         """
-        info = anime_info(" ".join(anime_query))
+        info = super().anime_search(" ".join(anime_query))
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")
             return
@@ -277,3 +175,4 @@ class AnimeInfo(commands.Cog):
 
 def setup(bot):
     bot.add_cog(AnimeInfo(bot))
+ 

@@ -7,6 +7,7 @@ import praw
 import discord
 from discord.ext import commands
 
+
 with open("./config/server_config.json", "r") as f:
     SERVER_CONFIG = json.load(f)
 
