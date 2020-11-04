@@ -70,7 +70,7 @@ class BotStatus(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1,10, commands.BucketType.member)
-    async def about(self, ctx):
+    async def zer0(self, ctx):
         """
         Displays bot's Information.
         """

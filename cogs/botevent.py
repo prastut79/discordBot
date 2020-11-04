@@ -23,7 +23,7 @@ class BotEvent(commands.Cog):
         if ctx.message.author == self.bot.user:
             return
         elif isinstance(ctx.message.channel, discord.channel.DMChannel):
-            await ctx.send('u')
+            # await ctx.send('u')
             return
 
     @commands.Cog.listener()
@@ -31,9 +31,9 @@ class BotEvent(commands.Cog):
         if isinstance(error, discord.ext.commands.errors.CommandNotFound):
             pass
         elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-            await ctx.send(f'> Error\n> {error}')
+            await ctx.send(f'>>> Errorrr\nMissing Required Argument.\n{error}')
         elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-            await ctx.send(f'> Error\n> {error}')
+            await ctx.send(f'>>> Errorrr\n{error}')
         elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
             await ctx.message.add_reaction('⏳')
         elif isinstance(error, discord.ext.commands.errors.MissingRole):

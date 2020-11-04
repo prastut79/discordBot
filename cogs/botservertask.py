@@ -8,9 +8,9 @@ class BotServerTask(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(name="InvitaionLink",aliases=['cinvite'])
+    @commands.command(name="InvitaionLink",aliases=['serverinvite','sinv'])
     @commands.cooldown(1,60, commands.BucketType.member)
-    async def inv(self, ctx):
+    async def _serverinvite(self, ctx):
         """
         Create a Invitaion Link for the Server.
         """
@@ -129,10 +129,20 @@ class BotServerTask(commands.Cog):
 
         await ctx.message.add_reaction('☑')
 
-
-    @commands.command(name='Zer00', aliases=['zer0'])
+    @commands.command(name='UpdateMemberCount')
     @commands.is_owner()
-    async def zer0(self, ctx):
+    async def memcount(self, ctx):
+        """
+        Update the Member Count.
+        """
+        member_count = len(ctx.guild.members)
+        channel = ctx.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
+        await channel.edit(name= f'🧑｜MEMBERS: {member_count}')
+
+
+    @commands.command(name='Zero', aliases=['zeroo'])
+    @commands.is_owner()
+    async def zeroo(self, ctx):
         """
         Zeroooooooooo0000000000
         """
