@@ -31,5 +31,6 @@ class ServerLeave(commands.Cog):
         ctx = await self.bot.get_context(goodbye_message)
         await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
 
+
 def setup(bot):
     bot.add_cog(ServerLeave(bot))
