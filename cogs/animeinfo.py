@@ -17,7 +17,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         self.url = "https://graphql.anilist.co"
 
     @commands.command(name="AnimeInformation", aliases=["anime"])
-    @commands.has_role(SERVER_CONFIG["role_anime_id"])
+    # @commands.has_role(SERVER_CONFIG["role_anime_id"])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def _anime(self, ctx, *anime_query):
         """
@@ -58,7 +58,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         synonyms = info["synonyms"] or [
             info["title"]["english"] or info["title"]["native"] or "-"
         ]
-        embed.add_field(name="Synonyms", value=("｜".join(synonyms)), inline=False)
+        embed.add_field(name="Synonyms", value=("**｜**".join(synonyms)), inline=False)
         # Genre
         genre = info["genres"] or ["-"]
         embed.add_field(
@@ -70,15 +70,18 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         status = info["status"] or "-"
         embed.add_field(name="Status", value=(status.replace("_", " ").title()))
 
+        if info["episodes"]:
+            episodes = info["episodes"]
+        else:
+            try:
+                episodes = info["nextAiringEpisode"]["episode"] - 1
+            except IndexError:
+                episodes = '-'
+                
         # Episodes
         embed.add_field(
             name="Episodes",
-            value=info["episodes"]
-            or (
-                info["nextAiringEpisode"]["episode"] - 1
-                if info["status"] != "NOT_YET_RELEASED"
-                else "-"
-            ),
+            value= episodes
         )
         # Studio
         try:

@@ -16,7 +16,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         self.url = "https://graphql.anilist.co"
 
     @commands.command(name="MangaInformation", aliases=["manga"])
-    @commands.has_role(SERVER_CONFIG["role_anime_id"])
+    # @commands.has_role(SERVER_CONFIG["role_anime_id"])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def _manga(self, ctx, *manga_query):
         """
@@ -57,7 +57,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         synonyms = info["synonyms"] or [
             info["title"]["english"] or info["title"]["native"] or "-"
         ]
-        embed.add_field(name="Synonyms", value=("｜".join(synonyms)), inline=False)
+        embed.add_field(name="Synonyms", value=("**｜**".join(synonyms)), inline=False)
         # Genre
         genre = info["genres"] or ["-"]
         embed.add_field(

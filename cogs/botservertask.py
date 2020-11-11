@@ -84,7 +84,11 @@ class BotServerTask(commands.Cog):
         """
         Copy And Paste a Specified Message in a Specified Channel.
         """
-        await channel.send(content=message.content, embed=message.embeds[0])
+        try:
+            await channel.send(content=message.content, embed=message.embeds[0])
+        except IndexError:
+            await channel.send(content=message.content)
+
     
 
     @commands.command(name="DirectMessage", aliases=['dm'])
