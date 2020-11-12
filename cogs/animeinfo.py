@@ -75,7 +75,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         else:
             try:
                 episodes = info["nextAiringEpisode"]["episode"] - 1
-            except IndexError:
+            except TypeError:
                 episodes = '-'
                 
         # Episodes
