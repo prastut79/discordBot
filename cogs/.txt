@@ -1,24 +1,3 @@
-import discord
-from discord.ext import commands
-import random
-import requests
-
-
-class Action(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-    
-    def get_url(self, query, description):
-        r = requests.get(f"https://nekos.life/api/v2/img/{query}")
-        info = r.json()
-        embed = discord.Embed(
-            description= description,
-            color= random.choice(self.bot.hex_colors)
-        )
-        embed.set_image(url = info['url'])
-        return embed
-
-
     @commands.command()
     @commands.cooldown(1,3, commands.BucketType.member)
     async def gasm(self, ctx, user: discord.Member = None):
@@ -74,7 +53,7 @@ class Action(commands.Cog):
     async def kiss(self, ctx, user: discord.Member = None):
         """Kiss Someone.
         """
-        description= f"{ctx.author.mention} just Kissed {'😘 '+user.mention if user else 'NoBody 😔'}"
+        description= f"{ctx.author.mention} just Kissed {user.mention if user else 'NoBody'}"
         embed = self.get_url('kiss', description)
         await ctx.send(embed=embed)
     
@@ -147,11 +126,5 @@ class Action(commands.Cog):
         description= f"{ctx.author.mention} just Woofed {user.mention if user else 'NoBody'}"
         embed = self.get_url('woof', description)
         await ctx.send(embed=embed)
-
     
-
-
-
-def setup(bot):
-    bot.add_cog(Action(bot))
 
