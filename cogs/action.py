@@ -20,3 +20,8 @@ class Action(commands.Cog):
     @commands.cooldown(1,3, commands.BucketType.member)
     async def kiss(self, ctx, user: discord.member = 'da'):
         ctx.send('hi')
+
+
+def setup(bot):
+    bot.add_cog(Action(bot))
+

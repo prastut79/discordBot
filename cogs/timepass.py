@@ -7,7 +7,6 @@ import random
 class TimePass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
 
     @commands.command(name='Choice', aliases=['choose','chs'])
     @commands.cooldown(1,3, commands.BucketType.member)
