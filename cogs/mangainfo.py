@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import requests
 import os
+import random
 
 from .AnilistAPI import search, errors
 
@@ -25,16 +26,16 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         manga_query = " ".join(manga_query)
         try:
             manga_query = int(manga_query)
-        except:
+        except ValueError:
             pass
 
         try:
             info = super().manga_search(manga_query)
         except errors.ContentNotFoundError:
-            await ctx.send("> Manga Not Found.")
+            await ctx.send(f"> Manga  `{manga_query}`  Not Found.")
             return
         except errors.IDNotFoundError:
-            await ctx.send("> Manga ID Not Found.")
+            await ctx.send(f"> Manga ID `{manga_query}` Not Found.")
             return
 
         if not isinstance(info, dict):
@@ -50,7 +51,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
             title=info["title"]["romaji"] or info["title"]["english"] or info,
             url=info["siteUrl"],
             description=description,
-            color=ctx.author.color,
+            color= random.choice(self.bot.hex_colors)
         )
 
         # Synonyms
@@ -84,14 +85,14 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         source = info["source"] or "-"
         embed.add_field(name="Source", value=source.title())
         # Start Date
-        if info["startDate"]["day"]:
-            start_date = f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
+        if info["startDate"]["year"]:
+            start_date = f"{info['startDate']['day'] or '?'}/{info['startDate']['month'] or '?'}/{info['startDate']['year']}"
         else:
             start_date = "-"
         embed.add_field(name="Premire Date", value=start_date)
         # End Date
-        if info["endDate"]["day"]:
-            end_date = f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
+        if info["endDate"]["year"]:
+            end_date = f"{info['endDate']['day'] or '?'}/{info['endDate']['month'] or '?'}/{info['endDate']['year']}"
 
         else:
             end_date = "-"

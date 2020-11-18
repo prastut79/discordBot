@@ -26,20 +26,20 @@ class BotEvent(commands.Cog):
             # await ctx.send('u')
             return
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, ctx, error):
-    #     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-    #         await ctx.send(f'>>> Errorrr\nMissing Required Argument.\n{error}')
-    #     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-    #         await ctx.send(f'>>> Errorrr\n{error}')
-    #     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-    #         await ctx.message.add_reaction('⏳')
-    #     elif isinstance(error, discord.ext.commands.errors.MissingRole):
-    #         pass
-    #     elif isinstance(error, discord.ext.commands.NotOwner):
-    #         pass
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+            pass
+        elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+            await ctx.send(f'>>> Errorrr\nMissing Required Argument.\n{error}')
+        elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+            await ctx.send(f'>>> Errorrr\n{error}')
+        elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+            await ctx.message.add_reaction('⏳')
+        elif isinstance(error, discord.ext.commands.errors.MissingRole):
+            pass
+        elif isinstance(error, discord.ext.commands.NotOwner):
+            pass
 
 
 def setup(bot):

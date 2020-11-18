@@ -54,14 +54,14 @@ bot.hex_colors = [c for c in bot.colors.values()]
 
 bot.version = "2.0"
 
-reddit = praw.Reddit(
+bot.reddit = praw.Reddit(
     client_id=SERVER_CONFIG["reddit_client_id"],
     client_secret=os.environ.get("reddit_client_secret"),
     username=SERVER_CONFIG["reddit_username"],
     password=os.environ.get("reddit_password"),
     user_agent=SERVER_CONFIG["reddit_user_agent"],
 )
-bot.reddit = reddit
+
 
 
 @bot.command()

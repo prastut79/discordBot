@@ -22,7 +22,7 @@ query ($id: Int!) {
         type
         format
         status
-        description(asHtml: true)
+        description
         startDate {
             year
             month
@@ -128,7 +128,8 @@ query ($id: Int!) {
         }
         studios(isMain: true) {
             nodes {
-                name	
+                name
+                siteUrl	
             }
         }
         isAdult
@@ -168,7 +169,7 @@ query ($id: Int!) {
         type
         format
         status
-        description(asHtml: true)
+        description
         startDate {
             year
             month

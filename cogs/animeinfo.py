@@ -4,6 +4,7 @@ from discord.ext import commands
 import json
 import requests
 import os
+import random 
 
 from .AnilistAPI import search, errors
 
@@ -26,13 +27,13 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         anime_query = " ".join(anime_query)
         try:
             anime_query = int(anime_query)
-        except:
+        except ValueError:
             pass
 
         try:
             info = super().anime_search(anime_query)
         except errors.ContentNotFoundError:
-            await ctx.send("> Anime Not Found.")
+            await ctx.send(f"> Anime `{anime_query}` Not Found.")
             return
         except errors.IDNotFoundError:
             await ctx.send("> Anime ID Not Found.")
@@ -41,7 +42,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")
             return
-
+ 
         if info["description"]:
             description = info["description"] + "\n\u200b"
         else:
@@ -51,7 +52,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             title=info["title"]["romaji"] or info["title"]["english"] or info,
             url=info["siteUrl"],
             description=description,
-            color=ctx.author.color,
+            color= random.choice(self.bot.hex_colors)
         )
 
         # Synonyms
@@ -59,6 +60,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             info["title"]["english"] or info["title"]["native"] or "-"
         ]
         embed.add_field(name="Synonyms", value=("**｜**".join(synonyms)), inline=False)
+
         # Genre
         genre = info["genres"] or ["-"]
         embed.add_field(
@@ -68,16 +70,16 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
 
         # Status
         status = info["status"] or "-"
-        embed.add_field(name="Status", value=(status.replace("_", " ").title()))
+        embed.add_field(name="Status", value=(status.replace("_", " ")))
 
-        if info["episodes"]:
-            episodes = info["episodes"]
+        if info['status'].lower()=='releasing':
+            episodes = f"**{info['nextAiringEpisode']['episode'] - 1}**/{info['episodes'] or '?'}"
         else:
-            try:
-                episodes = info["nextAiringEpisode"]["episode"] - 1
-            except TypeError:
+            if info["episodes"]:
+                episodes = info["episodes"]
+            else:
                 episodes = '-'
-                
+                    
         # Episodes
         embed.add_field(
             name="Episodes",
@@ -95,19 +97,20 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         # Season
         embed.add_field(
             name="Season",
-            value=f"{info['season'].title()} {info['seasonYear']}"
+            value=f"**{info['season'].title()}** {info['seasonYear']}"
             if info["season"] != None
             else "-",
         )
         # Start Date
-        if info["startDate"]["day"]:
-            start_date = f"{info['startDate']['day']}/{info['startDate']['month']}/{info['startDate']['year']}"
+        if info["startDate"]["year"]:
+            start_date = f"{info['startDate']['day'] or '?'}/{info['startDate']['month'] or '?'}/{info['startDate']['year']}"
         else:
             start_date = "-"
         embed.add_field(name="Premire Date", value=start_date)
+
         # End Date
-        if info["endDate"]["day"]:
-            end_date = f"{info['endDate']['day']}/{info['endDate']['month']}/{info['endDate']['year']}"
+        if info["endDate"]["year"]:
+            end_date = f"{info['endDate']['day'] or '?'}/{info['endDate']['month'] or '?'}/{info['endDate']['year']}"
 
         else:
             end_date = "-"
