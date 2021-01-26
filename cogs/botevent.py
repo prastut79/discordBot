@@ -29,7 +29,7 @@ class BotEvent(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-            await channel.send(f'>>>Error{error}')
+            await ctx.send(f'>>>Error{error}')
         elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
             await ctx.send(f'>>> Errorrr\nMissing Required Argument.\n{error}')
         elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
@@ -37,11 +37,11 @@ class BotEvent(commands.Cog):
         elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
             await ctx.message.add_reaction('⏳')
         elif isinstance(error, discord.ext.commands.errors.MissingRole):
-            await channel.send(f'>>>Error{error}')
+            await ctx.send(f'>>>Error{error}')
         elif isinstance(error, discord.ext.commands.NotOwner):
-            await channel.send(f'>>>Error{error}')
+            await ctx.send(f'>>>Error{error}')
         else:
-            await channel.send(f'>>>Error{error}')
+            await ctx.send(f'>>>Error{error}')
 
 
 def setup(bot):
