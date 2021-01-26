@@ -16,7 +16,7 @@ class ServerJoin(commands.Cog):
         """
         #WELCOME MESSAGE------------------------------------------------------------
         embed=discord.Embed(color= random.choice(self.bot.hex_colors), 
-                            description=f'{member.mention}, Welcome to **{member.guild}**.:tada:\n\nMember **#{len(list(member.guild.members))}**'
+                            description=f'{member.mention} joined the server. :tada:\n\nMember **#{len(list(member.guild.members))}**'
             )
         embed.set_thumbnail(url=f'{member.avatar_url}')
         embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')
@@ -49,13 +49,10 @@ class ServerJoin(commands.Cog):
             inv_link = await welcome_message_channel.create_invite(max_age=0, max_uses=0, unique=False)
 
             welcome_dm = f'''\
-Welcome {member.mention}
-
-Have a great time here in **{member.guild}**
+{member.mention}, Welcome to **{member.guild}**
 
 Enjoyyyy:tada:
-        
-Here is the Invitation Link to this Server:
+
 {inv_link}
 '''
             #gifs

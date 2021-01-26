@@ -99,7 +99,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             name="Season",
             value=f"**{info['season'].title()}** {info['seasonYear']}"
             if info["season"] != None
-            else "-",
+            else "-"
         )
         # Start Date
         if info["startDate"]["year"]:

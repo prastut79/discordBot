@@ -15,7 +15,7 @@ class ServerInfo(commands.Cog):
         Information about the server.
         """
         if ctx.author.bot == False:
-            embed = discord.Embed(title="Server Information",
+            embed = discord.Embed(title=ctx.guild,
                             colour= ctx.guild.owner.colour
             )
 

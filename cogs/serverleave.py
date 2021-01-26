@@ -16,7 +16,7 @@ class ServerLeave(commands.Cog):
         """
         embed= discord.Embed(
                         color=random.choice(self.bot.hex_colors), 
-                        description=f'**{member.name}** has left the server.\nGoodBye:wave:'
+                        description=f'**{member.name}** has left the server.'
             )
         embed.set_thumbnail(url=f'{member.avatar_url}')
         embed.set_author(name=f'{member.name}#{member.discriminator}', icon_url=f'{member.avatar_url}')

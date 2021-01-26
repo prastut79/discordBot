@@ -16,18 +16,12 @@ class UserInfo(commands.Cog):
         if ctx.author.bot == False:
             target = target or ctx.author
 
-            if target.bot:
-                title= 'Bot Information'
-            else:
-                title= 'User Information'
-                
-            embed = discord.Embed(title= title,
+            embed = discord.Embed(title= target,
                             colour=target.colour)
 
             embed.set_thumbnail(url=target.avatar_url)
 
-            fields = [                    
-                        ("Name", f'{str(target)}', True),
+            fields = [
                         ('Nickname', str(target.nick),True),
                         ("Top role", target.top_role.mention, True),
                         
