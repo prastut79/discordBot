@@ -53,7 +53,7 @@ class ServerJoin(commands.Cog):
 
 Enjoyyyy:tada:
 
-{inv_link}
+Invitaion link to this server: {inv_link}
 '''
             #gifs
             with open('config/welcome_gifs.txt','r') as f:
