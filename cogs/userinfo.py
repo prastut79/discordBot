@@ -27,7 +27,7 @@ class UserInfo(commands.Cog):
                 'offline': '⚪'
             }
 
-            if target.activity.type== discord.ActivityType.custom or target.activity.type==None:
+            if target.activity == None or target.activity.type== discord.ActivityType.custom:
                 activity_type = ''
             else:
                 activity_type = str(target.activity.type).split('.')[-1].title()
