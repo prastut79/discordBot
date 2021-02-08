@@ -26,22 +26,25 @@ class BotEvent(commands.Cog):
             # await ctx.send('u')
             return
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-            await ctx.send(f'>>>Error{error}')
-        elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-            await ctx.send(f'>>> Errorrr\nMissing Required Argument.\n{error}')
-        elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-            await ctx.send(f'>>> Errorrr\n{error}')
-        elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
-            await ctx.message.add_reaction('⏳')
-        elif isinstance(error, discord.ext.commands.errors.MissingRole):
-            await ctx.send(f'>>>Error{error}')
-        elif isinstance(error, discord.ext.commands.NotOwner):
-            await ctx.send(f'>>>Error{error}')
-        else:
-            await ctx.send(f'>>>Error{error}')
+    # @commands.Cog.listener()
+    # async def on_command_error(self, ctx, error):
+    #     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+    #         # await ctx.send(f'>>> **Error** {error}')
+    #         pass
+    #     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+    #         await ctx.send(f'``` **Error** \nMissing Required Argument.\n{error}```')
+    #     elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+    #         await ctx.send(f'``` **Error:** {error}```')
+    #     elif isinstance(error, discord.ext.commands.errors.CommandOnCooldown):
+    #         await ctx.message.add_reaction('⏳')
+    #     elif isinstance(error, discord.ext.commands.errors.MissingRole):
+    #         # await ctx.send(f'>>> **Error** {error}')
+    #         pass
+    #     elif isinstance(error, discord.ext.commands.NotOwner):
+    #         # await ctx.send(f'>>> **Error** {error}')
+    #         pass
+    #     else:
+    #         await ctx.send(f'``` **Error:** {error}```')
 
 
 def setup(bot):

@@ -16,23 +16,34 @@ class UserInfo(commands.Cog):
         if ctx.author.bot == False:
             target = target or ctx.author
 
-            embed = discord.Embed(title= target,
+            embed = discord.Embed(title= target.name,
                             colour=target.colour)
 
             embed.set_thumbnail(url=target.avatar_url)
+            status={
+                'idle': '🟠',
+                'online' : '🟢',
+                'dnd': '🔴',
+                'offline': '⚪'
+            }
 
+            if target.activity.type== discord.ActivityType.custom or target.activity.type==None:
+                activity_type = ''
+            else:
+                activity_type = str(target.activity.type).split('.')[-1].title()
+
+            activity= f"{status[str(target.status)]}  {activity_type} {target.activity.name if target.activity else ''}"
+            
             fields = [
-                        ('Nickname', str(target.nick),True),
+                        ('Nickname', str(target.nick) if target.nick else '-',True),
                         ("Top role", target.top_role.mention, True),
-                        
-                        ("Status", str(target.status).title(), True),
-                        ("Activity", f"*{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'}* **{target.activity.name if target.activity else ''}**", True),
                         ("Joined on", target.joined_at.strftime("%b %d, %Y "), False)
             ]
                         
             for name, value, inline in fields:
                 embed.add_field(name=name, value=value, inline=inline)
-
+            
+            embed.set_footer(text= activity)
             await ctx.send(embed=embed)
 
 def setup(bot):

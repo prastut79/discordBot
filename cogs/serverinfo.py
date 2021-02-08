@@ -15,7 +15,7 @@ class ServerInfo(commands.Cog):
         Information about the server.
         """
         if ctx.author.bot == False:
-            embed = discord.Embed(title=ctx.guild,
+            embed = discord.Embed(title= ctx.guild.name,
                             colour= ctx.guild.owner.colour
             )
 
@@ -42,10 +42,8 @@ class ServerInfo(commands.Cog):
 
                         ("\u200b",f"**🟢  {statuses[0]}｜🟠  {statuses[1]}｜🔴  {statuses[2]}｜⚪  {statuses[3]}**", False)
                     ]
-
             for name, value, inline in fields:
                 embed.add_field(name=name, value=value, inline=inline)
-
             await ctx.send(embed=embed)
     
 
@@ -87,7 +85,7 @@ class ServerInfo(commands.Cog):
                     k=0
                     animated=[]
                     temp=''
-                    for i in range(int(len(animated_list)/5)+1):
+                    for i in range((len(animated_list)/5)+1):
                         temp += ' '.join(animated_list[k:k+5])+'\n'
                         k+=5
                         if k>24 and k<26:

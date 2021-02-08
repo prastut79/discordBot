@@ -56,6 +56,20 @@ class BotAppreance(commands.Cog):
                 activity=discord.Activity(type=discord.ActivityType.listening, name=name)
         )
         await ctx.message.add_reaction('☑')
+
+    @commands.command(name= 'Competing', aliases=['zcompeting'])
+    @commands.is_owner()
+    async def _zcompeting(self, ctx, *name):
+        """
+        Change Bot Activity to Competing.
+        """
+        name=' '.join(list(name))
+        await self.bot.change_presence(
+                status=discord.Status.idle,
+                activity=discord.Activity(type=discord.ActivityType.competing, name=name)
+        )
+        await ctx.message.add_reaction('☑')
+    
     
 def setup(bot):
     bot.add_cog(BotAppreance(bot))
