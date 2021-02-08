@@ -14,5 +14,12 @@
     "reddit_client_id": "5FnNRh6CVAXA9g",
     "reddit_username": "netsos798",
     "reddit_user_agent": "discord_bot",
-    "gmail_email": "netsos798@gmail.com"
+    "gmail_email": "netsos798@gmail.com",
+
+    "text_colors": [
+        "brainfuck", "CSS", "yaml", "md", 
+        "fix", "glsl"
+    ]
+
+
 }
