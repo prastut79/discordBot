@@ -9,7 +9,7 @@ class ServerInfo(commands.Cog):
 
     
     @commands.command(name="ServerInformation", aliases=['serverinfo', 'si'])
-    @commands.cooldown(5,60*60*24, commands.BucketType.guild)
+    @commands.cooldown(1,5, commands.BucketType.member)
     async def server_info(self, ctx):
         """
         Information about the server.
