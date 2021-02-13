@@ -30,9 +30,9 @@ class UserInfo(commands.Cog):
             if target.activity == None or target.activity.type== discord.ActivityType.custom:
                 activity_type = ''
             else:
-                activity_type = str(target.activity.type).split('.')[-1].title()
+                activity_type = '  '+str(target.activity.type).split('.')[-1].title()
 
-            activity= f"{status[str(target.status)]}  {activity_type}  {target.activity.name if target.activity else ''}"
+            activity= f"{status[str(target.status)]}{activity_type}{'  '+target.activity.name if target.activity else ''}"
             
             fields = [
                         ('Nickname', str(target.nick) if target.nick else '-',True),

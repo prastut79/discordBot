@@ -148,10 +148,6 @@ class Action(commands.Cog):
         embed = self.get_url('woof', description)
         await ctx.send(embed=embed)
 
-    
-
-
-
 def setup(bot):
     bot.add_cog(Action(bot))
 

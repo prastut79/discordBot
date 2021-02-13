@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
-
+import random
 
 class ServerInfo(commands.Cog):
     def __init__(self, bot):
@@ -31,7 +31,7 @@ class ServerInfo(commands.Cog):
                         ("Region", f'{str(ctx.guild.region).title()}', True),
                         ("Created on", ctx.guild.created_at.strftime("%b %d, %Y "), True),
                         
-                        ("Members", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
+                        ("Members", f"{len(list(filter(lambda m: not m.bot, ctx.guild.members)))} | {len(list(filter(lambda m: m.bot, ctx.guild.members)))}", True),
                         ("Roles", len(ctx.guild.roles), True),
                         ("Banned", len(await ctx.guild.bans()), True),
 
@@ -59,7 +59,10 @@ class ServerInfo(commands.Cog):
             animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
 
             if len(non_animated_list)==0 and len(animated_list)==0:
-                await ctx.send(f'{ctx.author.mention}\n:exclamation: No custom emojis has been added in this Server.')
+                await ctx.send(f""":exclamation: {ctx.author.mention}
+```{random.choice(self.bot.SERVER_CONFIG['text_colors'])}
+No custom emojis has been added in this Server.
+```""")
             else:
                 #NON ANIMATED EMOJIS
                 if len(non_animated_list)>0:

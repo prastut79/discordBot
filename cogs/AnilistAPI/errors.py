@@ -19,7 +19,7 @@ class IDNotFoundError(ValueError):
     """
 
     def __init__(self, name):
-        super().__init__(f"{name} with such ID does not exist in Anilist Database.")
+        super().__init__(f"No {name} found with such ID.")
 
 
 class ContentNotFoundError(ValueError):

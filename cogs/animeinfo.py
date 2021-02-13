@@ -29,15 +29,15 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             anime_query = int(anime_query)
         except ValueError:
             pass
-
-        try:
-            info = super().anime_search(anime_query)
-        except errors.ContentNotFoundError:
-            await ctx.send(f"> Anime `{anime_query}` Not Found.")
-            return
-        except errors.IDNotFoundError:
-            await ctx.send("> Anime ID Not Found.")
-            return
+        info = super().anime_search(anime_query)
+        # try:
+        #     info = super().anime_search(anime_query)
+        # except errors.ContentNotFoundError:
+        #     await ctx.send(f"> Anime `{anime_query}` Not Found.")
+        #     return
+        # except errors.IDNotFoundError:
+        #     await ctx.send("> Anime ID Not Found.")
+        #     return
 
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")

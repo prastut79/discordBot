@@ -28,15 +28,16 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
             manga_query = int(manga_query)
         except ValueError:
             pass
-
-        try:
-            info = super().manga_search(manga_query)
-        except errors.ContentNotFoundError:
-            await ctx.send(f"> Manga  `{manga_query}`  Not Found.")
-            return
-        except errors.IDNotFoundError:
-            await ctx.send(f"> Manga ID `{manga_query}` Not Found.")
-            return
+        
+        info = super().manga_search(manga_query)
+        # try:
+            
+        # except errors.ContentNotFoundError:
+        #     await ctx.send(f"> Manga  `{manga_query}`  Not Found.")
+        #     return
+        # except errors.IDNotFoundError:
+        #     await ctx.send(f"> Manga ID `{manga_query}` Not Found.")
+        #     return
 
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")

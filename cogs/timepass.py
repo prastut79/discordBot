@@ -9,7 +9,7 @@ class TimePass(commands.Cog):
         self.bot = bot
 
     @commands.command(name='Choice', aliases=['choose','chs'])
-    @commands.cooldown(1,3, commands.BucketType.member)
+    @commands.cooldown(1,2, commands.BucketType.member)
     async def _choice(self, ctx, *args):
         """
         Choose between different items.
@@ -40,9 +40,9 @@ class TimePass(commands.Cog):
         if ctx.author.bot == False:
             if message[0][0] == '-':
                 try:
-                    count=message[0][1]
-                    for i in range(int(count)):
-                        send=' '.join(list(message)[1:])
+                    count=int(message[0][1])
+                    send=' '.join(list(message)[1:])
+                    for i in range(count):
                         await ctx.send(send)
                         await asyncio.sleep(0.3)
                 except ValueError:

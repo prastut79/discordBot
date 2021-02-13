@@ -42,7 +42,6 @@ class ServerJoin(commands.Cog):
             for i in role_to_give_on_join:
                 role_to_give_on_join = discord.utils.get(member.guild.roles, id=i)
                 await member.add_roles(role_to_give_on_join)
-                await asyncio.sleep(1)
 
             #_--------------------SEND DM---------------------------------------------
             #create inv link
@@ -53,7 +52,7 @@ class ServerJoin(commands.Cog):
 
 Enjoyyyy:tada:
 
-Invitaion link to this server: {inv_link}
+Invitaion link to the server: {inv_link}
 '''
             #gifs
             with open('config/welcome_gifs.txt','r') as f:

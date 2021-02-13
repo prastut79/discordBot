@@ -88,6 +88,7 @@ class BotServerTask(commands.Cog):
             await channel.send(content=message.content, embed=message.embeds[0])
         except IndexError:
             await channel.send(content=message.content)
+        await ctx.message.add_reaction('☑')
 
     
 
@@ -142,6 +143,7 @@ class BotServerTask(commands.Cog):
         member_count = len(ctx.guild.members)
         channel = ctx.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
         await channel.edit(name= f'🧑｜MEMBERS: {member_count}')
+        await ctx.message.add_reaction('☑')
 
 
     @commands.command(name='Zero', aliases=['zeroo'])
@@ -165,8 +167,8 @@ class BotServerTask(commands.Cog):
 		    ./__;       '   |  / |  , ;   \   \  ',  /         
 		    |   :     .'|   :    |---'     ;   :    /          
 		    ;   |  .'    \   \  /           \   \ .'           
-		    `---'         `----'             `---`                                   
-        """
+		    `---'         `----'             `---`
+            """
 
         await ctx.send(f'```{a}```')
 
