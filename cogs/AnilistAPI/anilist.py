@@ -12,7 +12,7 @@ A Class that uses the  Anilist API(v2 GraphQL) to get information on:
 
 *Unique ID of each of the above Attributes is Required.
 
-Netsos
+@Netsos
 """
 
 
@@ -30,7 +30,7 @@ class Anilist:
 
     def anime(self, id: int):
         """
-        This Method takes ID of an Anime in the Parameter.
+        This Method takes ID of an Anime.
 
         Returns the Series Information based on the Provided ID as a Dictionary.
         """
@@ -53,7 +53,7 @@ class Anilist:
 
     def manga(self, id: int):
         """
-        This Method takes ID of a Manga in the Parameter.
+        This Method takes ID of a Manga.
 
         Returns the Series Information based on the Provided ID as a Dictionary.
         """
@@ -76,7 +76,7 @@ class Anilist:
 
     def character(self, id: int):
         """
-        This Method takes ID of a Character in the Parameter.
+        This Method takes ID of a Character.
 
         Returns the Character Information based on the Provided ID as a Dictionary.
         """
@@ -98,7 +98,7 @@ class Anilist:
 
     def staff(self, id: int):
         """
-        This Method takes ID of a Staff in the Parameter.
+        This Method takes ID of a Staff.
 
         Returns the Staff Information based on the Provided ID as a Dictionary.
         """
@@ -120,7 +120,7 @@ class Anilist:
 
     def studio(self, id: int):
         """
-        This Method takes ID of a Studio in the Parameter.
+        This Method takes ID of a Studio.
 
         Returns the Studio Information based on the Provided ID as a Dictionary.
         """

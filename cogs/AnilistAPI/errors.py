@@ -5,7 +5,7 @@ Errors
 
 Error for AnilistAPI
 
-Netsos
+@Netsos
 """
 
 

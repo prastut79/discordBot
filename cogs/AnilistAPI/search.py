@@ -26,7 +26,7 @@ the respective method of Anilist Class
 imported from anilist.
 
 
-Netsos
+@Netsos
 """
 
 import requests

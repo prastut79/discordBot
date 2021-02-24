@@ -6,6 +6,8 @@ queries of:
 2. Character
 3. Staff
 4. Studio
+
+@Netsos
 """
 
 

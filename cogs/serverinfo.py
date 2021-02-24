@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import random
+from math import ceil 
 
 class ServerInfo(commands.Cog):
     def __init__(self, bot):
@@ -45,59 +46,58 @@ class ServerInfo(commands.Cog):
             for name, value, inline in fields:
                 embed.add_field(name=name, value=value, inline=inline)
             await ctx.send(embed=embed)
-    
 
     @commands.command(name='ServerEmojis', aliases=['smoji'])
-    @commands.cooldown(1,120, commands.BucketType.member)
-    async def _serveremoji(self, ctx, extra='list'):
+    @commands.cooldown(10,120, commands.BucketType.member)
+    async def _serveremoji(self, ctx):
         """
         List all the Custom emoji of the Server.
         """
 
-        if extra=='list':
-            non_animated_list= [f'<:{i.name}:{i.id}>' for i in ctx.guild.emojis if not i.animated]
-            animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
 
-            if len(non_animated_list)==0 and len(animated_list)==0:
-                await ctx.send(f""":exclamation: {ctx.author.mention}
+        non_animated_list= [f'<:{i.name}:{i.id}>' for i in ctx.guild.emojis if not i.animated]
+        animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
+
+        if len(non_animated_list)==0 and len(animated_list)==0:
+            await ctx.send(f""":exclamation: {ctx.author.mention}
 ```{random.choice(self.bot.SERVER_CONFIG['text_colors'])}
 No custom emojis has been added in this Server.
 ```""")
-            else:
-                #NON ANIMATED EMOJIS
-                if len(non_animated_list)>0:
-                    await ctx.send('**Server Emojis**')
-                    k=0
-                    non_animated=[]
-                    temp=''
-                    for i in range(int(len(non_animated_list)/5)+1):
-                        temp += ' '.join(non_animated_list[k:k+5])+'\n'
-                        k+=5
-                        if k>24 and k<26:
-                            non_animated.append(temp)
-                            temp=''
-                    non_animated.append(temp)
-            
-                    for i in non_animated:
-                        await ctx.send(i)
-    
+        else:
+            #NON ANIMATED EMOJIS
+            if len(non_animated_list)>0:
+                await ctx.send(f'**Server Emojis ({len(non_animated_list)})**')
+                k=0
+                non_animated=[]
+                temp=''
+                for i in range(ceil(len(non_animated_list)/5)):
+                    temp += ' '.join(non_animated_list[k:k+5])+'\n'
+                    k+=5
+                    if k%25==0:
+                        non_animated.append(temp)
+                        temp=''
+                non_animated.append(temp) if temp !='' else ''
+                
+                for i in non_animated:
+                    await ctx.send(i)
 
-                #ANIMATED EMOJIS
-                if len(animated_list)>0:
-                    await ctx.send('**Server Animated Emojis**')
-                    k=0
-                    animated=[]
-                    temp=''
-                    for i in range((len(animated_list)/5)+1):
-                        temp += ' '.join(animated_list[k:k+5])+'\n'
-                        k+=5
-                        if k>24 and k<26:
-                            animated.append(temp)
-                            temp=''
-                    animated.append(temp)
 
-                    for i in animated:
-                        await ctx.send(i)
+            #ANIMATED EMOJIS
+            if len(animated_list)>0:
+                await ctx.send(f'**Server Emojis ({len(animated_list)})**')
+                k=0
+                animated=[]
+                temp=''
+                for i in range(ceil(len(animated_list)/5)):
+                    temp += ' '.join(animated_list[k:k+5])+'\n'
+                    k+=5
+                    if k%25==0:
+                        animated.append(temp)
+                        temp=''
+                animated.append(temp) if temp !='' else ''
+                
+                for i in animated:
+                    await ctx.send(i)
 
 
 def setup(bot):

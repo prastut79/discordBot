@@ -50,7 +50,7 @@ class ServerJoin(commands.Cog):
             welcome_dm = f'''\
 {member.mention}, Welcome to **{member.guild}**
 
-Enjoyyyy:tada:
+Enjoyyy:tada:
 
 Invitaion link to the server: {inv_link}
 '''
