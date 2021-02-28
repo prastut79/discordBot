@@ -29,9 +29,16 @@ class ServerJoin(commands.Cog):
         welcome_msg= await welcome_message_channel.send(embed=embed)
 
         
+        
+        # -----Get ctx Object-------
+        # ctx = await self.bot.get_context(welcome_msg)
+        # await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
+        # -----------------------------------
+        
         # EDIT TOTAL MEMBER COUNT
-        ctx = await self.bot.get_context(welcome_msg)
-        await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
+        member_count = len(member.guild.members)
+        channel = member.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
+        await channel.edit(name= f'🧑｜MEMBERS: {member_count}')
 
         #GIVE ROLE ON JOIN
         if member.bot:

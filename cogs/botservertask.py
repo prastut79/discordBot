@@ -78,7 +78,7 @@ class BotServerTask(commands.Cog):
         except asyncio.TimeoutError:
             await ctx.send('I can\'t wait any longer')
         
-    @commands.command(name= 'CopyAndPaste', aliases=['copypaste'])
+    @commands.command(name= 'CopyAndPaste', aliases=['cap'])
     @commands.is_owner()
     async def _copypaste(self, ctx, channel: discord.TextChannel, message: discord.Message):
         """

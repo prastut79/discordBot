@@ -48,13 +48,11 @@ class ServerInfo(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(name='ServerEmojis', aliases=['smoji'])
-    @commands.cooldown(10,120, commands.BucketType.member)
+    @commands.cooldown(1,30, commands.BucketType.member)
     async def _serveremoji(self, ctx):
         """
         List all the Custom emoji of the Server.
         """
-
-
         non_animated_list= [f'<:{i.name}:{i.id}>' for i in ctx.guild.emojis if not i.animated]
         animated_list= [f'<a:{i.name}:{i.id}>' for i in ctx.guild.emojis if i.animated]
 
