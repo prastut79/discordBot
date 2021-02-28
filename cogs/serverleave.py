@@ -25,11 +25,15 @@ class ServerLeave(commands.Cog):
 
         #SEND GOODBYE MESSAGE
         goodybye_channel = member.guild.get_channel(self.bot.SERVER_CONFIG['goodbye_message_channel'])
-        goodbye_message = await goodybye_channel.send(embed=embed)
+        await goodybye_channel.send(embed=embed)
+
+        # ctx = await self.bot.get_context(goodbye_message)
+        # await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
 
         # EDIT TOTAL MEMBER COUNT
-        ctx = await self.bot.get_context(goodbye_message)
-        await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
+        member_count = len(member.guild.members)
+        channel = member.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
+        await channel.edit(name= f'🧑｜MEMBERS: {member_count}')
 
 
 def setup(bot):

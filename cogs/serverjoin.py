@@ -34,7 +34,7 @@ class ServerJoin(commands.Cog):
         # ctx = await self.bot.get_context(welcome_msg)
         # await ctx.invoke(self.bot.get_command('UpdateMemberCount'))
         # -----------------------------------
-        
+
         # EDIT TOTAL MEMBER COUNT
         member_count = len(member.guild.members)
         channel = member.guild.get_channel(self.bot.SERVER_CONFIG['member_count_channel'])
