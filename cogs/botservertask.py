@@ -151,7 +151,7 @@ class BotServerTask(commands.Cog):
         """
         Office 365 Crack
         """
-        ctx.send(f"```{cracks.office365crack}```")
+        await ctx.send(f"```{cracks.office365crack}```")
 
     @commands.command(name="windowscrack")
     @commands.is_owner()
@@ -159,7 +159,7 @@ class BotServerTask(commands.Cog):
         """
         Windows 10 Crack
         """
-        ctx.send(f"```{cracks.windows10crack}```")
+        await ctx.send(f"```{cracks.windows10crack}```")
 
     @commands.command(name='Zero', aliases=['zeroo'])
     @commands.is_owner()

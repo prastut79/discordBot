@@ -95,7 +95,12 @@ async def reload(ctx, extension):
 if __name__ == "__main__":
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
-            bot.load_extension(f"cogs.{filename[:-3]}")
+            try:
+                bot.load_extension(f"cogs.{filename[:-3]}")
+            except AttributeError:
+                pass
+            except discord.ext.commands.errors.NoEntryPointError:
+                pass
 
     DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
     bot.run(DISCORD_TOKEN)
