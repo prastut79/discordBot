@@ -9,17 +9,19 @@
         756428207200403477
     ],
     "bot_log_channel":803649927560560662,
+
     "role_bot_id": 756429809759813683,
     "role_anime_id": 765250041249529867,
+    
     "reddit_client_id": "5FnNRh6CVAXA9g",
     "reddit_username": "netsos798",
     "reddit_user_agent": "discord_bot",
     "gmail_email": "netsos798@gmail.com",
 
     "text_colors": [
-        "brainfuck", "CSS", "yaml", "md", 
+        "yaml", "md", 
         "fix", "glsl"
-    ]
-
-
+    ],
+    "welcome_emojis": [],
+    "anilist_logo": "https://anilist.co/img/icons/android-chrome-512x512.png"
 }

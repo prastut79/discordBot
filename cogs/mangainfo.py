@@ -159,7 +159,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         # Add Footer
         embed.set_footer(
             text=f"Source: Anilist.co",
-            icon_url=f"https://anilist.co/img/icons/android-chrome-512x512.png",
+            icon_url= self.bot.SERVER_CONFIG['anilist_logo'],
         )
         # Add Author
         typ = (
