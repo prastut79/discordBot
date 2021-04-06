@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
-import cracks
+from . import cracks
 
 class BotServerTask(commands.Cog):
     def __init__(self, bot):
