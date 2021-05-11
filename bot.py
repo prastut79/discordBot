@@ -50,6 +50,7 @@ bot.colors = {
     "DARK_RED": 0x992D22,
     "DARK_NAVY": 0x2C3E50,
 }
+
 bot.hex_colors = [c for c in bot.colors.values()]
 
 bot.version = "2.0"
@@ -61,7 +62,6 @@ bot.reddit = praw.Reddit(
     password=os.environ.get("reddit_password"),
     user_agent=SERVER_CONFIG["reddit_user_agent"],
 )
-
 
 
 @bot.command()

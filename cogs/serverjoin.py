@@ -72,9 +72,13 @@ Invitaion link to the server: {inv_link}
             embed.set_image(url=random.choice(gifs))
             await member.send(embed=embed)
             
-        #add reaction
-        welcome_emoji = discord.utils.get(member.guild.emojis, name='welcome')
-        await welcome_msg.add_reaction(welcome_emoji)
+        #add reaction to welcome message
+        welcome_emojis= self.bot.SERVER_CONFIG['welcome_emojis']
+        for i in welcome_emojis:
+            emoji= self.bot.get_emoji(i)
+            if emoji:
+                await welcome_msg.add_reaction(emoji)
+
 
 def setup(bot):
     bot.add_cog(ServerJoin(bot))
