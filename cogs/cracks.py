@@ -36,4 +36,11 @@ echo ===========================================================================
 pause >nul
 """
 
-
+autospam="""
+import time, pyautogui
+time.sleep(3)
+for i in range(5):
+    pyautogui.typewrite("Hi")
+    pyautogui.press('enter')
+    time.sleep(1)
+"""

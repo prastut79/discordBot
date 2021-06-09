@@ -90,8 +90,6 @@ class BotServerTask(commands.Cog):
             await channel.send(content=message.content)
         await ctx.message.add_reaction('☑')
 
-    
-
     @commands.command(name="DirectMessage", aliases=['dm'])
     @commands.is_owner()
     async def _dm(self, ctx, user:discord.Member, *message):
@@ -145,21 +143,21 @@ class BotServerTask(commands.Cog):
         await channel.edit(name= f'🧑｜MEMBERS: {member_count}')
         await ctx.message.add_reaction('☑')
 
-    @commands.command(name="officecrack")
-    @commands.is_owner()
-    async def office365crack(self, ctx):
-        """
-        Office 365 Crack
-        """
-        await ctx.send(f"```{cracks.office365crack}```")
+    # @commands.command(name="officecrack")
+    # @commands.is_owner()
+    # async def office365crack(self, ctx):
+    #     """
+    #     Office 365 Crack
+    #     """
+    #     await ctx.send(f"```{cracks.office365crack}```")
 
-    @commands.command(name="windowscrack")
-    @commands.is_owner()
-    async def windows10crack(self, ctx):
-        """
-        Windows 10 Crack
-        """
-        await ctx.send(f"```{cracks.windows10crack}```")
+    # @commands.command(name="windowscrack")
+    # @commands.is_owner()
+    # async def windows10crack(self, ctx):
+    #     """
+    #     Windows 10 Crack
+    #     """
+    #     await ctx.send(f"```{cracks.windows10crack}```")
 
     @commands.command(name='Zero', aliases=['zeroo'])
     @commands.is_owner()

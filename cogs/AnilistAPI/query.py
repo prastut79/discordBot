@@ -85,6 +85,7 @@ query ($id: Int!) {
         relations {
             edges {
                 id
+                relationType(version: 2)
                 node {
                     id
                     siteUrl

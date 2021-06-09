@@ -64,7 +64,7 @@ No custom emojis has been added in this Server.
         else:
             #NON ANIMATED EMOJIS
             if len(non_animated_list)>0:
-                await ctx.send(f'**Server Emojis ({len(non_animated_list)})**')
+                await ctx.send(f'**{len(non_animated_list)} Server Emojis**')
                 k=0
                 non_animated=[]
                 temp=''
@@ -82,7 +82,7 @@ No custom emojis has been added in this Server.
 
             #ANIMATED EMOJIS
             if len(animated_list)>0:
-                await ctx.send(f'**Server Emojis ({len(animated_list)})**')
+                await ctx.send(f'**{len(animated_list)} Server Animated Emojis**')
                 k=0
                 animated=[]
                 temp=''

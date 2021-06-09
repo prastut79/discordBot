@@ -103,14 +103,14 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         )
         # Start Date
         if info["startDate"]["year"]:
-            start_date = f"{info['startDate']['day'] or '?'}/{info['startDate']['month'] or '?'}/{info['startDate']['year']}"
+            start_date = f"{info['startDate']['day'] or '?'}-{info['startDate']['month'] or '?'}-{info['startDate']['year']}"
         else:
             start_date = "-"
         embed.add_field(name="Premire Date", value=start_date)
 
         # End Date
         if info["endDate"]["year"]:
-            end_date = f"{info['endDate']['day'] or '?'}/{info['endDate']['month'] or '?'}/{info['endDate']['year']}"
+            end_date = f"{info['endDate']['day'] or '?'}-{info['endDate']['month'] or '?'}-{info['endDate']['year']}"
 
         else:
             end_date = "-"

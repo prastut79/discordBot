@@ -2,7 +2,6 @@
 # whitespace = \u200b
 import os
 import json
-from datetime import datetime, timedelta
 import praw
 import discord
 from discord.ext import commands
