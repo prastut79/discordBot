@@ -28,10 +28,10 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
             manga_query = int(manga_query)
         except ValueError:
             pass
-        
+
         info = super().manga_search(manga_query)
         # try:
-            
+
         # except errors.ContentNotFoundError:
         #     await ctx.send(f"> Manga  `{manga_query}`  Not Found.")
         #     return
@@ -52,7 +52,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
             title=info["title"]["romaji"] or info["title"]["english"] or info,
             url=info["siteUrl"],
             description=description,
-            color= random.choice(self.bot.hex_colors)
+            color=random.choice(self.bot.hex_colors),
         )
 
         # Synonyms
@@ -87,13 +87,13 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         embed.add_field(name="Source", value=source.title())
         # Start Date
         if info["startDate"]["year"]:
-            start_date = f"{info['startDate']['day'] or '?'}-{info['startDate']['month'] or '?'}-{info['startDate']['year']}"
+            start_date = f"{info['startDate']['year']}-{info['startDate']['month'] or '?'}-{info['startDate']['day'] or '?'}"
         else:
             start_date = "-"
         embed.add_field(name="Premire Date", value=start_date)
         # End Date
         if info["endDate"]["year"]:
-            end_date = f"{info['endDate']['day'] or '?'}-{info['endDate']['month'] or '?'}-{info['endDate']['year']}"
+            end_date = f"{info['endDate']['year']}-{info['endDate']['month'] or '?'}-{info['endDate']['day'] or '?'}"
 
         else:
             end_date = "-"
@@ -159,7 +159,7 @@ class MangaInfo(commands.Cog, search.AnilistSearch):
         # Add Footer
         embed.set_footer(
             text=f"Source: Anilist.co",
-            icon_url= self.bot.SERVER_CONFIG['anilist_logo'],
+            icon_url=self.bot.SERVER_CONFIG["anilist_logo"],
         )
         # Add Author
         typ = (

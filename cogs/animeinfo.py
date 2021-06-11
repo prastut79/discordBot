@@ -4,7 +4,7 @@ from discord.ext import commands
 import json
 import requests
 import os
-import random 
+import random
 
 from .AnilistAPI import search, errors
 
@@ -42,7 +42,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         if not isinstance(info, dict):
             await ctx.send(f"> {info}")
             return
- 
+
         if info["description"]:
             description = info["description"] + "\n\u200b"
         else:
@@ -52,7 +52,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             title=info["title"]["romaji"] or info["title"]["english"] or info,
             url=info["siteUrl"],
             description=description,
-            color= random.choice(self.bot.hex_colors)
+            color=random.choice(self.bot.hex_colors),
         )
 
         # Synonyms
@@ -72,19 +72,16 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         status = info["status"] or "-"
         embed.add_field(name="Status", value=(status.replace("_", " ")))
 
-        if info['status'].lower()=='releasing':
+        if info["status"].lower() == "releasing":
             episodes = f"**{info['nextAiringEpisode']['episode'] - 1}**/{info['episodes'] or '?'}"
         else:
             if info["episodes"]:
                 episodes = info["episodes"]
             else:
-                episodes = '-'
-                    
+                episodes = "-"
+
         # Episodes
-        embed.add_field(
-            name="Episodes",
-            value= episodes
-        )
+        embed.add_field(name="Episodes", value=episodes)
         # Studio
         try:
             embed.add_field(
@@ -99,18 +96,18 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
             name="Season",
             value=f"**{info['season'].title()}** {info['seasonYear']}"
             if info["season"] != None
-            else "-"
+            else "-",
         )
         # Start Date
         if info["startDate"]["year"]:
-            start_date = f"{info['startDate']['day'] or '?'}-{info['startDate']['month'] or '?'}-{info['startDate']['year']}"
+            start_date = f"{info['startDate']['year']}-{info['startDate']['month'] or '?'}-{info['startDate']['day'] or '?'}"
         else:
             start_date = "-"
         embed.add_field(name="Premire Date", value=start_date)
 
         # End Date
         if info["endDate"]["year"]:
-            end_date = f"{info['endDate']['day'] or '?'}-{info['endDate']['month'] or '?'}-{info['endDate']['year']}"
+            end_date = f"{info['endDate']['year']}-{info['endDate']['month'] or '?'}-{info['endDate']['day'] or '?'}"
 
         else:
             end_date = "-"
@@ -175,7 +172,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         # Add Footer
         embed.set_footer(
             text=f"Source: Anilist.co",
-            icon_url= self.bot.SERVER_CONFIG['anilist_logo'],
+            icon_url=self.bot.SERVER_CONFIG["anilist_logo"],
         )
         # Add Author
         embed.set_author(
