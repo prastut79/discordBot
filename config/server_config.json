@@ -4,6 +4,7 @@
     "server_prefix": "-",
     "member_count_channel": 757225313943027772,
     "welcome_message_channel": 756417893314461766,
+    "server_log_channel": 852927474366677022,
     "goodbye_message_channel": 756452827395784775,
     "role_to_give_on_join": [
         756428207200403477
@@ -12,11 +13,11 @@
 
     "role_bot_id": 756429809759813683,
     "role_anime_id": 765250041249529867,
-    
-    "reddit_client_id": "5FnNRh6CVAXA9g",
-    "reddit_username": "netsos798",
-    "reddit_user_agent": "discord_bot",
-    "gmail_email": "netsos798@gmail.com",
+
+    "role_server_boosters": 852928663489216552,
+    "server_booster_color": "0xf47fff",
+    "server_booster_emoji": 852954184688467998,
+    "server_booster_icon": "https://cdn.discordapp.com/attachments/756463347922239511/852950547778502706/7485_server_boost.png",
 
     "text_colors": [
         "yaml", "md", 
@@ -28,5 +29,12 @@
         763423771545436190
     ],
 
-    "anilist_logo": "https://anilist.co/img/icons/android-chrome-512x512.png"
+    "anilist_logo": "https://anilist.co/img/icons/android-chrome-512x512.png",
+    "reddit_client_id": "5FnNRh6CVAXA9g",
+    "reddit_username": "netsos798",
+    "reddit_user_agent": "discord_bot",
+    "gmail_email": "netsos798@gmail.com"
+
+    
+
 }
