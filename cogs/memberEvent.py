@@ -1,8 +1,5 @@
 from discord.ext import commands
 import discord
-from discord.ext.commands import bot
-from discord.guild import Guild
-from discord.member import Member
 from datetime import datetime
 import random
 
@@ -17,7 +14,7 @@ class MemberEvent(commands.Cog):
 
         embed = discord.Embed(
             color=int(self.config["server_booster_color"], 16),
-            description=f"{member.mention} just boosted the server. \n\nBooster: **#{member.guild.premium_subscription_count}**",
+            description=f"{member.mention} just boosted the server. \n\nBooster: **#{len(member.guild.premium_subscribers)}**",
         )
 
         embed.set_author(
@@ -53,6 +50,9 @@ class MemberEvent(commands.Cog):
         When a server Member is updated
         """
         if before.premium_since is None and after.premium_since is not None:
+            await self.on_server_boost(after)
+
+        if not before.bot:
             await self.on_server_boost(after)
 
 
