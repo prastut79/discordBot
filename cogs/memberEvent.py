@@ -52,9 +52,6 @@ class MemberEvent(commands.Cog):
         if before.premium_since is None and after.premium_since is not None:
             await self.on_server_boost(after)
 
-        if not before.bot:
-            await self.on_server_boost(after)
-
 
 def setup(bot):
     bot.add_cog(MemberEvent(bot))
