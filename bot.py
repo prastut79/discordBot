@@ -6,7 +6,6 @@ import praw
 import discord
 from discord.ext import commands
 
-
 with open("./config/server_config.json", "r") as f:
     SERVER_CONFIG = json.load(f)
 
@@ -23,10 +22,10 @@ bot = commands.Bot(
     case_insensitive=True,
     intents=intents,
 )
+
 # bot.remove_command('help')
 
-with open("./config/server_config.json", "r") as f:
-    bot.SERVER_CONFIG = json.load(f)
+bot.SERVER_CONFIG = SERVER_CONFIG
 
 bot.colors = {
     "WHITE": 0xFFFFFF,

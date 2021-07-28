@@ -25,7 +25,8 @@ class MemberEvent(commands.Cog):
         embed.timestamp = datetime.utcnow()
 
         await member.add_roles(
-            member.guild.get_role(self.config["role_server_boosters"])
+            member.guild.get_role(self.config["role_server_boosters"]),
+            reason="Server Boosting",
         )
 
         booster_message = await sever_log.send(embed=embed)

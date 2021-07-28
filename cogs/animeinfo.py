@@ -2,8 +2,6 @@
 import discord
 from discord.ext import commands
 import json
-import requests
-import os
 import random
 
 from .AnilistAPI import search, errors
@@ -24,7 +22,7 @@ class AnimeInfo(commands.Cog, search.AnilistSearch):
         """
         Display Information about the specified Anime.
         """
-        anime_query = " ".join(anime_query)
+        anime_query = " ".join([anime_query])
         try:
             anime_query = int(anime_query)
         except ValueError:
